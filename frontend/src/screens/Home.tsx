@@ -1,7 +1,17 @@
-const Home = () => {
-  return (
-    <div>Home</div>
-  )
-}
+import { Box, Stack } from '@mui/material';
+import NavBar from '../components/NavBar';
 
-export default Home
+const Home = () => {
+	return (
+		<>
+			<Box>
+				<NavBar />
+			</Box>
+			<Stack>
+				<main>Home</main>
+			</Stack>
+		</>
+	);
+};
+
+export default Home;
