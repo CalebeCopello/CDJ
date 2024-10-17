@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { useNavigate, useLocation } from 'react-router-dom';
+
 import { Box, AppBar, Toolbar, Typography, InputBase, IconButton, Button, Stack } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -9,6 +11,11 @@ import { Logo } from '../assets/Logo';
 const NavgationBar = () => {
 	const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
 
+	const navigate = useNavigate();
+	const location = useLocation();
+
+	console.log(location);
+
 	return (
 		<>
 			<Box sx={{ flexGrow: 1 }}>
@@ -17,10 +24,13 @@ const NavgationBar = () => {
 					sx={{ borderRadius: 1 }}
 				>
 					<Toolbar>
-						<Logo
-							fill={`#fff`}
-							sx={{ mr: 1, fontSize: 46 }}
-						/>
+						<IconButton>
+							<Logo
+								fill={`#fff`}
+								sx={{ mr: 1, fontSize: 46 }}
+								onClick={() => navigate('/')}
+							/>
+						</IconButton>
 						<Typography
 							variant='h6'
 							component={`div`}
@@ -72,6 +82,8 @@ const NavgationBar = () => {
 										<Button
 											variant='outlined'
 											color='inherit'
+											onClick={() => navigate(`/signup`)}
+											disabled={location.pathname === '/signup'}
 										>
 											Sign Up
 										</Button>

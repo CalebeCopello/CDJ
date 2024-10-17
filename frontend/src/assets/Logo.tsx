@@ -1,6 +1,5 @@
 import { SvgIcon, SvgIconProps } from '@mui/material';
 export const Logo = (props: SvgIconProps) => {
-    console.log(props)
 	return (
 		<>
 			<SvgIcon {...props}>
