@@ -5,7 +5,6 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-
 import Home from './screens/Home';
 import SignUp from './screens/SignUp';
 
@@ -18,10 +17,10 @@ function App() {
 						path='/'
 						element={<Home />}
 					/>
-          <Route 
-            path='/signup'
-            element={<SignUp />}
-          />
+					<Route
+						path='/signup'
+						element={<SignUp />}
+					/>
 				</Routes>
 			</BrowserRouter>
 		</>

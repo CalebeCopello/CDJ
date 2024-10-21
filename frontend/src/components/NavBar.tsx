@@ -2,31 +2,45 @@ import { useState } from 'react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { Box, AppBar, Toolbar, Typography, InputBase, IconButton, Button, Stack } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import { Box, AppBar, Toolbar, Typography, InputBase, IconButton, Button, Stack, useTheme, Menu, MenuItem } from '@mui/material';
+import { AccountCircle, MoreVert, Search } from '@mui/icons-material';
 
 import { Logo } from '../assets/Logo';
 
 const NavgationBar = () => {
 	const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
 
+	const [anchorMobileMenu, setAnchorMobileMenu] = useState<null | HTMLElement>(null);
+	const openMobileMenu = Boolean(anchorMobileMenu);
+	const closeMobileMenu = () => {
+		setAnchorMobileMenu(null);
+	};
+	const handleClickMobileMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorMobileMenu(e.currentTarget);
+	};
+
 	const navigate = useNavigate();
 	const location = useLocation();
+	const theme = useTheme();
 
+	//Debugging like a noob
+	console.log(theme);
 	console.log(location);
 
 	return (
 		<>
-			<Box sx={{ flexGrow: 1 }}>
+			<Box
+				sx={{ flexGrow: 1 }}
+				component={`header`}
+			>
 				<AppBar
 					position='static'
 					sx={{ borderRadius: 1 }}
 				>
 					<Toolbar>
-						<IconButton>
+						<IconButton disabled={location.pathname === '/'}>
 							<Logo
-								fill={`#fff`}
+								fill={theme.palette.background.default}
 								sx={{ mr: 1, fontSize: 46 }}
 								onClick={() => navigate('/')}
 							/>
@@ -34,14 +48,14 @@ const NavgationBar = () => {
 						<Typography
 							variant='h6'
 							component={`div`}
-							sx={{ display: { xs: 'none', sm: 'block' } }}
+							sx={{ display: { xs: 'none', md: 'block' } }}
 						>
 							Copello's Developer Journal
 						</Typography>
 						<Typography
 							variant='h6'
 							component={`div`}
-							sx={{ display: { xs: 'block', sm: 'none' } }}
+							sx={{ display: { xs: 'block', md: 'none' } }}
 						>
 							CDJ
 						</Typography>
@@ -55,7 +69,7 @@ const NavgationBar = () => {
 								component={`div`}
 								sx={{ mt: 0.5 }}
 							>
-								<SearchIcon />
+								<Search />
 							</Box>
 							<InputBase
 								placeholder='Search...'
@@ -75,9 +89,44 @@ const NavgationBar = () => {
 								</IconButton>
 							) : (
 								<>
+									<Box sx={{ display: { xs: 'block', md: 'none' } }}>
+										<IconButton
+											color='inherit'
+											id='mobile-menu-button'
+											aria-controls={openMobileMenu ? 'mobile-menu' : undefined}
+											aria-haspopup='true'
+											aria-expanded={openMobileMenu ? 'true' : undefined}
+											onClick={handleClickMobileMenu}
+										>
+											<MoreVert />
+										</IconButton>
+										<Menu
+											id='mobile-menu'
+											anchorEl={anchorMobileMenu}
+											open={openMobileMenu}
+											onClose={closeMobileMenu}
+											MenuListProps={{
+												'aria-labelledby': 'mobile-menu-button',
+											}}
+										>
+											<MenuItem
+												onClick={closeMobileMenu}
+												disabled={location.pathname === '/signup'}
+											>
+												Sign Up
+											</MenuItem>
+											<MenuItem
+												onClick={closeMobileMenu}
+												disabled={location.pathname === '/signin'}
+											>
+												Sign In
+											</MenuItem>
+										</Menu>
+									</Box>
 									<Stack
 										spacing={2}
 										direction={`row`}
+										sx={{ display: { xs: 'none', md: 'block' } }}
 									>
 										<Button
 											variant='outlined'
