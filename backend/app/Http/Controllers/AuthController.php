@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -25,14 +26,45 @@ class AuthController extends Controller
             'password.min' => 'The Password must be 4 or more characters long',
             'password.max' => 'Password must be at most 20 characters long',
         ]);
+
         $user = User::create($fields);
 
-        return $user;
+        $token = $user->createToken($request->username);
+
+        return [
+            'info' => $user,
+            'token' => $token
+        ];
     }
 
     public function signin(Request $request)
     {
-        return 'signin' . $request;
+        $request->validate(
+            [
+                'email' => 'required|exists:users,email',
+                'password' => 'required'
+            ],
+            [
+                'email.required' => 'The Email is required',
+                'email.exists' => 'The Email is not registred',
+                'password.required' => 'The Password is required',
+            ]
+        );
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return [
+                'message' => 'Invalid Email or Password'
+            ];
+        }
+
+        $token = $user->createToken($user->username);
+
+
+        return [
+            'info' => $user,
+            'token' => $token
+        ];
     }
 
     public function signout(Request $request)
