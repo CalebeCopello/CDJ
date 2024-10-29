@@ -1,31 +1,29 @@
 import { Box, Container, Paper, Divider, TextField, Typography, Button } from '@mui/material';
-import { AlternateEmail, Google, GitHub } from '@mui/icons-material';
+import { Google, GitHub } from '@mui/icons-material';
 
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { signUpFormSchema } from '../libs/schemas';
+import { signInFormSchema } from '../libs/schemas';
 
-const SignUpForm = () => {
+const SignInForm = () => {
 	const mbValue: number = 2;
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<z.infer<typeof signUpFormSchema>>({
-		resolver: zodResolver(signUpFormSchema),
+	} = useForm<z.infer<typeof signInFormSchema>>({
+		resolver: zodResolver(signInFormSchema),
 		defaultValues: {
-			username: '',
 			email: '',
 			password: '',
-			confirmPassword: '',
 		},
 	});
-	const handleSignUpFormSubmit = (values: z.infer<typeof signUpFormSchema>) => {
-		console.log('testing');
-		console.log(values);
-	};
+
+    const handleSignInFormSubmit = (values: z.infer<typeof signInFormSchema>) => {
+        console.log(values)
+    }
 
 	return (
 		<>
@@ -40,31 +38,15 @@ const SignUpForm = () => {
 						align='center'
 						sx={{ mb: mbValue }}
 					>
-						Sign Up
+						Sign In
 					</Typography>
 					<Paper
 						component={'form'}
 						variant='outlined'
 						square={false}
-						onSubmit={handleSubmit(handleSignUpFormSubmit)}
+						onSubmit={handleSubmit(handleSignInFormSubmit)}
 					>
-						<Container sx={{ display: 'flex', pt: 4, mb: mbValue }}>
-							<Box>
-								<AlternateEmail
-									color='primary'
-									sx={{ mt: 1, mr: 0.5 }}
-								/>
-							</Box>
-							<Box>
-								<TextField
-									fullWidth
-									size='small'
-									label='Username'
-									{...register('username')}
-									helperText={errors.username ? errors.username.message : 'Choose your Username'}
-									error={!!errors.username}
-									sx={{ mb: mbValue }}
-								/>
+						<Container sx={{ pt: 4, mb: mbValue }}>
 								<TextField
 									fullWidth
 									size='small'
@@ -86,17 +68,6 @@ const SignUpForm = () => {
 									error={!!errors.password}
 									sx={{ mb: mbValue }}
 								/>
-								<TextField
-									fullWidth
-									size='small'
-									id='confirmPassword'
-									label='Confirm Password'
-									type='password'
-									{...register('confirmPassword')}
-									helperText={errors.confirmPassword ? errors.confirmPassword.message : 'Enter your Password again'}
-									error={!!errors.confirmPassword}
-								/>
-							</Box>
 						</Container>
 						<Divider
 							variant='middle'
@@ -108,7 +79,7 @@ const SignUpForm = () => {
 								variant='contained'
 								type='submit'
 							>
-								Sign Up
+								Sign In
 							</Button>
 						</Box>
 						<Divider
@@ -122,14 +93,14 @@ const SignUpForm = () => {
 								startIcon={<Google />}
 								sx={{ mb: mbValue }}
 							>
-								Sign Up using Google
+								Sign In using Google
 							</Button>
 							<Button
 								size='large'
 								variant='contained'
 								startIcon={<GitHub />}
 							>
-								Sign Up using GitHub
+								Sign In using GitHub
 							</Button>
 						</Box>
 					</Paper>
@@ -139,4 +110,4 @@ const SignUpForm = () => {
 	);
 };
 
-export default SignUpForm;
+export default SignInForm;

@@ -24,8 +24,8 @@ const NavgationBar = () => {
 	const theme = useTheme();
 
 	//Debugging like a noob
-	console.log(theme);
-	console.log(location);
+	// console.log(theme);
+	// console.log(location);
 
 	return (
 		<>
@@ -133,12 +133,14 @@ const NavgationBar = () => {
 											color='inherit'
 											onClick={() => navigate(`/signup`)}
 											disabled={location.pathname === '/signup'}
-										>
+											>
 											Sign Up
 										</Button>
 										<Button
 											variant='outlined'
 											color='inherit'
+											onClick={() => navigate(`/signin`)}
+											disabled={location.pathname === '/signin'}
 										>
 											Sign In
 										</Button>
