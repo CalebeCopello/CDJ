@@ -6,8 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { signInFormSchema } from '../libs/schemas';
 
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 const SignInForm = () => {
 	const mbValue: number = 2;
+	const API_URL = import.meta.env.VITE_API_URL;
 
 	const {
 		register,
@@ -21,9 +25,30 @@ const SignInForm = () => {
 		},
 	});
 
-    const handleSignInFormSubmit = (values: z.infer<typeof signInFormSchema>) => {
-        console.log(values)
-    }
+	const handleSignInFormSubmit = (values: z.infer<typeof signInFormSchema>) => {
+		axios
+			.post(`${API_URL}/signin`, {
+				email: values.email,
+				password: values.password,
+			})
+			.then((res) => {
+				console.debug('SignUp Form Submit Success Object:', res);
+				const TOKEN: string = `Bearer ${res.data.token.plainTextToken}`;
+				Cookies.set('CDJAuth', TOKEN, { sameSite: 'strict', expires: 365 });
+			})
+			.catch((err) => {
+				if (err.response) {
+					console.error(`From Submit Error Data:`, err.response);
+					console.error(`From Submit Error Status:`, err.response.status);
+					console.error(`From Submit Error Headers:`, err.response.headers);
+				} else if (err.request) {
+					console.error(`Form Submit No Response`, err.request);
+				} else {
+					console.error(`Form Submit Error Message`, err.message);
+				}
+				console.error(`Form Submit Error Config:`, err.config);
+			});
+	};
 
 	return (
 		<>
@@ -47,27 +72,27 @@ const SignInForm = () => {
 						onSubmit={handleSubmit(handleSignInFormSubmit)}
 					>
 						<Container sx={{ pt: 4, mb: mbValue }}>
-								<TextField
-									fullWidth
-									size='small'
-									id='email'
-									label='Email'
-									{...register('email')}
-									helperText={errors.email ? errors.email?.message : 'Enter your Email'}
-									error={!!errors.email}
-									sx={{ mb: mbValue }}
-								/>
-								<TextField
-									fullWidth
-									size='small'
-									id='password'
-									label='Password'
-									type='password'
-									{...register('password')}
-									helperText={errors.password ? errors.password.message : 'Enter your Password'}
-									error={!!errors.password}
-									sx={{ mb: mbValue }}
-								/>
+							<TextField
+								fullWidth
+								size='small'
+								id='email'
+								label='Email'
+								{...register('email')}
+								helperText={errors.email ? errors.email?.message : 'Enter your Email'}
+								error={!!errors.email}
+								sx={{ mb: mbValue }}
+							/>
+							<TextField
+								fullWidth
+								size='small'
+								id='password'
+								label='Password'
+								type='password'
+								{...register('password')}
+								helperText={errors.password ? errors.password.message : 'Enter your Password'}
+								error={!!errors.password}
+								sx={{ mb: mbValue }}
+							/>
 						</Container>
 						<Divider
 							variant='middle'

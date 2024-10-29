@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 
 const SignUpForm = () => {
 	const mbValue: number = 2;
-	const API_URL = import.meta.env.VITE_API_URL;
+	const API_URL:string = import.meta.env.VITE_API_URL;
 
 	const {
 		register,

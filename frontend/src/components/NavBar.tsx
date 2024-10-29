@@ -110,13 +110,19 @@ const NavgationBar = () => {
 											}}
 										>
 											<MenuItem
-												onClick={closeMobileMenu}
+												onClick={() => {
+													closeMobileMenu();
+													navigate(`/signup`);
+												}}
 												disabled={location.pathname === '/signup'}
-											>
+												>
 												Sign Up
 											</MenuItem>
 											<MenuItem
-												onClick={closeMobileMenu}
+												onClick={() => {
+													closeMobileMenu();
+													navigate(`/signin`);
+												}}
 												disabled={location.pathname === '/signin'}
 											>
 												Sign In
@@ -133,7 +139,7 @@ const NavgationBar = () => {
 											color='inherit'
 											onClick={() => navigate(`/signup`)}
 											disabled={location.pathname === '/signup'}
-											>
+										>
 											Sign Up
 										</Button>
 										<Button
