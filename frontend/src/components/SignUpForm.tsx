@@ -6,8 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { signUpFormSchema } from '../libs/schemas';
 
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 const SignUpForm = () => {
 	const mbValue: number = 2;
+	const API_URL = import.meta.env.VITE_API_URL;
 
 	const {
 		register,
@@ -22,9 +26,31 @@ const SignUpForm = () => {
 			confirmPassword: '',
 		},
 	});
+
 	const handleSignUpFormSubmit = (values: z.infer<typeof signUpFormSchema>) => {
-		console.log('testing');
-		console.log(values);
+		axios
+			.post(`${API_URL}/signup`, {
+				username: values.username,
+				email: values.email,
+				password: values.password,
+			})
+			.then((res) => {
+				console.debug('SignUp Form Submit Success Object:', res);
+				const TOKEN:string = `Bearer ${res.data.token.plainTextToken}`
+				Cookies.set('CDJAuth', TOKEN, {sameSite: 'strict', expires: 365})
+			})
+			.catch((err) => {
+				if (err.response) {
+					console.error(`From Submit Error Data:`, err.response.data.errors);
+					console.error(`From Submit Error Status:`, err.response.status);
+					console.error(`From Submit Error Headers:`, err.response.headers);
+				} else if (err.request) {
+					console.error(`Form Submit No Response`, err.request);
+				} else {
+					console.error(`Form Submit Error Message`, err.message);
+				}
+				console.error(`Form Submit Error Config:`, err.config);
+			});
 	};
 
 	return (
