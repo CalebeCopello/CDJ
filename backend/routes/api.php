@@ -8,13 +8,11 @@ Route::get('/', function () {
     return 'Hello World!';
 });
 
+//User Routes
+
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/signin', [AuthController::class, 'signin']);
-Route::post('/signout', [AuthController::class, 'signout']);
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-Route::get('/user', function (Request $request) {
-    return 'Allowed' . $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function() {
+    Route::post('/signout', [AuthController::class, 'signout']);
+    Route::get('/user', function (Request $request) {return 'Allowed' . $request->user();});
+});

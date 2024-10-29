@@ -54,7 +54,7 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return [
-                'message' => 'Invalid Email or Password'
+                'message' => 'Invalid Email or Password.'
             ];
         }
 
@@ -69,6 +69,9 @@ class AuthController extends Controller
 
     public function signout(Request $request)
     {
-        return 'signout' . $request;
+        $request->user()->tokens()->delete();
+        return [
+            'message' => "You have signed out."
+        ];
     }
 }
