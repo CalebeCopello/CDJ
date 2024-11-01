@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -13,7 +13,7 @@ class AuthController extends Controller
         $fields = $request->validate([
             'username' => 'required|unique:users|min:3|max:20|regex:/^[a-zA-Z0-9_-]+$/',
             'email' => 'required|unique:users',
-            'password' => 'required|min:4|max:20'
+            'password' => 'required|min:4|max:20',
         ], [
             'username.required' => 'The username is required.',
             'username.unique' => 'The Username is already taken. Please choose another one',
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         return [
             'info' => $user,
-            'token' => $token
+            'token' => $token,
         ];
     }
 
@@ -42,7 +42,7 @@ class AuthController extends Controller
         $request->validate(
             [
                 'email' => 'required|exists:users,email',
-                'password' => 'required'
+                'password' => 'required',
             ],
             [
                 'email.required' => 'The Email is required',
@@ -54,24 +54,24 @@ class AuthController extends Controller
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'Invalid Email or Password.'
-            ],401);
+                'message' => 'Invalid Email or Password.',
+            ], 401);
         }
 
         $token = $user->createToken($user->username);
 
-
         return [
             'info' => $user,
-            'token' => $token
+            'token' => $token,
         ];
     }
 
     public function signout(Request $request)
     {
         $request->user()->tokens()->delete();
+
         return [
-            'message' => "You have signed out."
+            'message' => 'You have signed out.',
         ];
     }
 }
