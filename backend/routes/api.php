@@ -9,13 +9,13 @@ Route::get('/', function () {
     return 'Hello World!';
 });
 
-//User Routes
+// User Routes
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/signin', [AuthController::class, 'signin']);
-Route::middleware('auth:sanctum')->group(function() {
+Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/signout', [AuthController::class, 'signout']);
 
     Route::get('/user/signed', [UserController::class, 'signed']);
-    Route::get('/user', function (Request $request) {return 'Allowed' . $request->user();});
+    Route::get('/user', function (Request $request) {return 'Allowed'.$request->user(); });
 });
