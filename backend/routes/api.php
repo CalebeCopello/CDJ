@@ -4,13 +4,19 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', function () {
     return 'Hello World!';
 });
 
-// User Routes
+// Socialite Routes
+Route::get('/auth/github/redirect', function () {
+    return Socialite::driver('github')->stateless()->redirect();
+});
+Route::get('/auth/github/callback', [AuthController::class, 'github']);
 
+// User Routes
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/signin', [AuthController::class, 'signin']);
 Route::middleware('auth:sanctum')->group(function () {

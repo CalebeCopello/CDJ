@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use Config;
 
 class AuthController extends Controller
 {
@@ -73,5 +75,24 @@ class AuthController extends Controller
         return [
             'message' => 'You have signed out.',
         ];
+    }
+
+    //Socialite
+    //Github
+
+    public function github()
+    {
+        $github = Socialite::driver('github')->stateless()->user();
+
+        $user = User::firstOrCreate([
+            'email' => $github->getEmail(),
+        ],
+            [
+                'username' => $github->getNickName() . uniqid(),
+                'email' => $github->getEmail(),
+            ]);
+        $token = $user->createToken($user->username)->plainTextToken;
+        return redirect()->away(config('variables.client_url'))
+        ->cookie('CDJAuth','Bearer ' . $token, time() + (365 * 24 * 60 * 60), null, null, true, false);
     }
 }
