@@ -93,6 +93,22 @@ class AuthController extends Controller
             ]);
         $token = $user->createToken($user->username)->plainTextToken;
         return redirect()->away(config('variables.client_url'))
-        ->cookie('CDJAuth','Bearer ' . $token, time() + (365 * 24 * 60 * 60), null, null, true, false);
+        ->cookie('CDJAuth','Bearer ' . $token, 525600, null, null, true, false);
+    }
+    public function google()
+    {
+        $google = Socialite::driver('google')->stateless()->user();
+        $username = str_replace(' ', '', $google->getName()) . uniqid();
+
+        $user = User::firstOrCreate([
+            'email' => $google->getEmail(),
+        ],
+            [
+                'username' => $username,
+                'email' => $google->getEmail(),
+            ]);
+        $token = $user->createToken($user->username)->plainTextToken;
+        return redirect()->away(config('variables.client_url'))
+        ->cookie('CDJAuth','Bearer ' . $token, 525600, null, null, true, false);
     }
 }

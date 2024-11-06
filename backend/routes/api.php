@@ -15,6 +15,10 @@ Route::get('/auth/github/redirect', function () {
     return Socialite::driver('github')->stateless()->redirect();
 });
 Route::get('/auth/github/callback', [AuthController::class, 'github']);
+Route::get('/auth/google/redirect', function () {
+    return Socialite::driver('google')->stateless()->redirect();
+});
+Route::get('/auth/google/callback', [AuthController::class, 'google']);
 
 // User Routes
 Route::post('/signup', [AuthController::class, 'signup']);
