@@ -1,4 +1,4 @@
-import { Box, Container, Paper, Divider, TextField, Typography, Button } from '@mui/material';
+import { Box, Container, Paper, Divider, TextField, Typography, Button, Link } from '@mui/material';
 import { Google, GitHub } from '@mui/icons-material';
 
 import { z } from 'zod';
@@ -117,6 +117,7 @@ const SignInForm = () => {
 								variant='contained'
 								startIcon={<Google />}
 								sx={{ mb: mbValue }}
+								href={`${API_URL}/auth/google/redirect`}
 							>
 								Sign In using Google
 							</Button>
@@ -124,6 +125,7 @@ const SignInForm = () => {
 								size='large'
 								variant='contained'
 								startIcon={<GitHub />}
+								href={`${API_URL}/auth/github/redirect`}
 							>
 								Sign In using GitHub
 							</Button>

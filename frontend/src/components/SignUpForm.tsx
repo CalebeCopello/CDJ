@@ -147,6 +147,7 @@ const SignUpForm = () => {
 								variant='contained'
 								startIcon={<Google />}
 								sx={{ mb: mbValue }}
+								href={`${API_URL}/auth/google/redirect`}
 							>
 								Sign Up using Google
 							</Button>
@@ -154,6 +155,7 @@ const SignUpForm = () => {
 								size='large'
 								variant='contained'
 								startIcon={<GitHub />}
+								href={`${API_URL}/auth/github/redirect`}
 							>
 								Sign Up using GitHub
 							</Button>
