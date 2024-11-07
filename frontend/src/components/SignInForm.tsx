@@ -1,4 +1,6 @@
-import { Box, Container, Paper, Divider, TextField, Typography, Button, Link } from '@mui/material';
+import { useState } from 'react';
+
+import { Box, Container, Paper, Divider, TextField, Typography, Button, Alert } from '@mui/material';
 import { Google, GitHub } from '@mui/icons-material';
 
 import { z } from 'zod';
@@ -13,6 +15,8 @@ const SignInForm = () => {
 	const mbValue: number = 2;
 	const API_URL = import.meta.env.VITE_API_URL;
 
+	const [signInFormErrorMessage, setSignInFormErrorMessage] = useState<string | null>(null);
+
 	const {
 		register,
 		handleSubmit,
@@ -26,6 +30,7 @@ const SignInForm = () => {
 	});
 
 	const handleSignInFormSubmit = (values: z.infer<typeof signInFormSchema>) => {
+		setSignInFormErrorMessage(() => null);
 		axios
 			.post(`${API_URL}/signin`, {
 				email: values.email,
@@ -37,12 +42,17 @@ const SignInForm = () => {
 				Cookies.set('CDJAuth', TOKEN, { sameSite: 'strict', expires: 365 });
 			})
 			.catch((err) => {
+				setSignInFormErrorMessage(() => 'Email or Password incorrect');
 				if (err.response) {
 					console.error(`From Submit Error Data:`, err.response);
 					console.error(`From Submit Error Status:`, err.response.status);
+					if (err.response.status === 404) {
+						setSignInFormErrorMessage(() => 'API route not found: 404');
+					}
 					console.error(`From Submit Error Headers:`, err.response.headers);
 				} else if (err.request) {
 					console.error(`Form Submit No Response`, err.request);
+					setSignInFormErrorMessage(() => 'API server not responding');
 				} else {
 					console.error(`Form Submit Error Message`, err.message);
 				}
@@ -94,6 +104,14 @@ const SignInForm = () => {
 								sx={{ mb: mbValue }}
 							/>
 						</Container>
+						{signInFormErrorMessage && (
+							<Alert
+								severity='error'
+								sx={{ mb: mbValue, mx: 2 }}
+							>
+								{signInFormErrorMessage}
+							</Alert>
+						)}
 						<Divider
 							variant='middle'
 							sx={{ mb: mbValue }}
