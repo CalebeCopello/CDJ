@@ -1,4 +1,6 @@
-import { Box, Container, Paper, Divider, TextField, Typography, Button } from '@mui/material';
+import { useState } from 'react';
+
+import { Box, Container, Paper, Divider, TextField, Typography, Button, Alert } from '@mui/material';
 import { AlternateEmail, Google, GitHub } from '@mui/icons-material';
 
 import { z } from 'zod';
@@ -9,9 +11,16 @@ import { signUpFormSchema } from '../libs/schemas';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+interface SignUpFormErrorResponse {
+	[key: string]: string[];
+}
+
 const SignUpForm = () => {
 	const mbValue: number = 2;
-	const API_URL:string = import.meta.env.VITE_API_URL;
+	const API_URL: string = import.meta.env.VITE_API_URL;
+
+	const [signUpFormErrorMessage, setSignUpFormErrorMessage] = useState<SignUpFormErrorResponse | null>(null);
+	const [apiNoConnectionMessage, setApiNoConnectionMessage] = useState<string | null>(null);
 
 	const {
 		register,
@@ -28,6 +37,8 @@ const SignUpForm = () => {
 	});
 
 	const handleSignUpFormSubmit = (values: z.infer<typeof signUpFormSchema>) => {
+		setSignUpFormErrorMessage(() => null);
+		setApiNoConnectionMessage(() => null);
 		axios
 			.post(`${API_URL}/signup`, {
 				username: values.username,
@@ -36,22 +47,29 @@ const SignUpForm = () => {
 			})
 			.then((res) => {
 				console.debug('SignUp Form Submit Success Object:', res);
-				const TOKEN:string = `Bearer ${res.data.token.plainTextToken}`
-				Cookies.set('CDJAuth', TOKEN, {sameSite: 'strict', expires: 365})
+				const TOKEN: string = `Bearer ${res.data.token.plainTextToken}`;
+				Cookies.set('CDJAuth', TOKEN, { sameSite: 'strict', expires: 365 });
 			})
 			.catch((err) => {
 				if (err.response) {
 					console.error(`From Submit Error Data:`, err.response.data.errors);
 					console.error(`From Submit Error Status:`, err.response.status);
+					if (err.response.status === 404) {
+						setApiNoConnectionMessage(() => 'API route not found: 404')
+					}
 					console.error(`From Submit Error Headers:`, err.response.headers);
+					setSignUpFormErrorMessage(() => err.response.data.errors);
 				} else if (err.request) {
 					console.error(`Form Submit No Response`, err.request);
+					setApiNoConnectionMessage(() => 'API server not responding');
 				} else {
 					console.error(`Form Submit Error Message`, err.message);
 				}
 				console.error(`Form Submit Error Config:`, err.config);
 			});
 	};
+
+	console.log(signUpFormErrorMessage);
 
 	return (
 		<>
@@ -124,6 +142,29 @@ const SignUpForm = () => {
 								/>
 							</Box>
 						</Container>
+						{apiNoConnectionMessage && (
+							<Alert
+								severity='error'
+								sx={{ mb: mbValue, mx: 2 }}
+							>
+								{apiNoConnectionMessage}
+							</Alert>
+						)}
+						{signUpFormErrorMessage && (
+							<Alert
+								severity='error'
+								sx={{ mb: mbValue, mx: 2 }}
+							>
+								{Object.keys(signUpFormErrorMessage).map((key) => (
+									<Box key={key}>
+										{' '}
+										{signUpFormErrorMessage[key].map((message, key) => (
+											<Box key={key}>{message}</Box>
+										))}{' '}
+									</Box>
+								))}
+							</Alert>
+						)}
 						<Divider
 							variant='middle'
 							sx={{ mb: mbValue }}
