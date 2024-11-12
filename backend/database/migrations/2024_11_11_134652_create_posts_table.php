@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('slug')->unique();
             $table->string('title');
+            $table->longText('body');
             $table->string('img');
             $table->boolean('is_published')->default(false);
             $table->timestamps();
