@@ -7,7 +7,7 @@ const Home = () => {
 			<Box>
 				<NavBar />
 			</Box>
-			<Stack>
+			<Stack component={'main'}>
 				<main>Home</main>
 			</Stack>
 		</>

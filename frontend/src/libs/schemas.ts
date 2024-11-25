@@ -23,4 +23,5 @@ const signInFormSchema = z.object({
 	email: z.string().email({ message: 'The Email is required' }).trim().toLowerCase(),
 	password: z.string().min(4, { message: 'The Password is at least 4 character long' }).max(20, { message: 'The Password is at most 20 character long' }),
 });
+
 export { signUpFormSchema, signInFormSchema };

@@ -38,11 +38,10 @@ const NavgationBar = () => {
 					sx={{ borderRadius: 1 }}
 				>
 					<Toolbar>
-						<IconButton disabled={location.pathname === '/'}>
+						<IconButton disabled={location.pathname === '/'} onClick={() => navigate('/')}>
 							<Logo
 								fill={theme.palette.background.default}
 								sx={{ mr: 1, fontSize: 46 }}
-								onClick={() => navigate('/')}
 							/>
 						</IconButton>
 						<Typography
