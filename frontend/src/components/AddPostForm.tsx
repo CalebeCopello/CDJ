@@ -87,8 +87,6 @@ const AddPostForm = () => {
 						</Box>
 					</Box>
 					<Divider sx={{ mb: mValue }} />
-
-					<Divider sx={{ mb: mValue }} />
 					<Box sx={{ display: 'flex', justifyContent: 'center', mb: mValue }}>
 						<img
 							src='/imgs/posts/placeholder.png'
