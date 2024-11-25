@@ -20,6 +20,7 @@ class PostController extends Controller
             'title' => 'required|unique:posts,title',
             'body' => 'required',
             'img' => 'required',
+            'published_at' => 'required',
         ], [
             'slug.required' => 'The slug is required.',
             'slug.unique' => 'The slug must be unique.',
@@ -27,9 +28,10 @@ class PostController extends Controller
             'title.unique' => 'The title must be unique.',
             'body.required' => 'The body text is required',
             'img.required' => 'An image is required',
+            'published_at.required' => 'A date is required',
         ]);
 
-        $fields = array_merge($fields, [ 'user_id' => $request->user()->id, 'is_published' => false]);
+        $fields = array_merge($fields, [ 'user_id' => $request->user()->id]);
 
         $post = Post::create($fields);
 
