@@ -41,7 +41,7 @@ const NavgationBar = () => {
 						<IconButton disabled={location.pathname === '/'} onClick={() => navigate('/')}>
 							<Logo
 								fill={theme.palette.background.default}
-								sx={{ mr: 1, fontSize: 46 }}
+								sx={{ fontSize: 46 }}
 							/>
 						</IconButton>
 						<Typography
