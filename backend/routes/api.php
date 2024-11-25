@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,9 @@ Route::get('/auth/google/redirect', function () {
     return Socialite::driver('google')->stateless()->redirect();
 });
 Route::get('/auth/google/callback', [AuthController::class, 'google']);
+
+// Tags Routes
+Route::get('/tags/get-all', [TagController::class, 'getTags']);
 
 // User Routes
 Route::post('/signup', [AuthController::class, 'signup']);
