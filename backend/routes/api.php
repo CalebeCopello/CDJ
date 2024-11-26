@@ -36,4 +36,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {return 'Allowed'.$request->user(); });
     //post
     Route::post('/post/add', [PostController::class, 'addPost']);
+    Route::post('/post/add-image', [PostController::class, 'uploadImage']);
 });
