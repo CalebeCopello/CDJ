@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -36,5 +37,25 @@ class PostController extends Controller
         $post = Post::create($fields);
 
         return response()->json($post, 201);
+    }
+
+    public function uploadImage(Request $request) {
+
+        if(!$request->user()->is_admin) {
+            return response()->json([
+                'message' => 'You are not an Admin'
+            ], 403);
+        }
+
+        $request->validate([
+            'img' => 'required|image|mimes:jpeg,jpg,gif,png|max:2048'
+        ]);
+
+        $path = $request->file('img')->store('posts/post-images', 'public');
+
+        return response()->json([
+            'message' => 'upload image successfully',
+            'path' => $path
+        ], 200);
     }
 }
