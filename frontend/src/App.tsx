@@ -43,7 +43,7 @@ function App() {
 							element={<ProtectedRoute children={<User />} />}
 						/>
 						<Route
-							path='/addpost'
+							path='/post/add'
 							element={<ProtectedRoute children={<AddPost />} />}
 						/>
 					</Routes>
