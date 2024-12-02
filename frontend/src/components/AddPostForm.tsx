@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Box, Container, TextField, Paper, Typography, Divider, Button, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Container, TextField, Paper, Typography, Divider, Button, FormControlLabel, Checkbox, Alert } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { CloudUpload } from '@mui/icons-material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -13,6 +13,7 @@ import { postFormSchema } from '../libs/schemas';
 
 import MDEditor from '@uiw/react-md-editor';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 interface TagsType {
 	created_at: Date;
@@ -26,6 +27,8 @@ const AddPostForm = () => {
 	const [bodyValue, setBodyValue] = useState<string | undefined>('');
 	const [fetchedTags, setFetchedTags] = useState<TagsType[] | undefined>([]);
 	const [postImage, setPostImage] = useState<string>('/imgs/posts/placeholder.png');
+	const [errorFetchMessage, setErrorFetchMessage] = useState<string | null>();
+	const [errorImageUploadMessage, setErrorImageUploadMessage] = useState<string | null>();
 
 	const mValue: number = 2;
 	const currentDate = dayjs();
@@ -70,9 +73,29 @@ const AddPostForm = () => {
 	};
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setErrorImageUploadMessage(() => '');
 		const file = e.target.files?.[0];
+		const TOKEN = Cookies.get('CDJAuth');
 		if (file) {
 			const img = URL.createObjectURL(file);
+			const formData = new FormData();
+			formData.append('img', file);
+			axios
+				.post(`${API_URL}/post/add-image`, formData, {
+					headers: {
+						'Content-Type': 'multipart/form-data',
+						Authorization: TOKEN,
+					},
+				})
+				.then((res) => {
+					setValue('img', res.data.path, { shouldValidate: true });
+					console.log(res.data.path);
+				})
+				.catch((err) => {
+					console.log('error:', err);
+					setErrorImageUploadMessage(() => err.response.data.message);
+					setPostImage(() => '/imgs/posts/placeholder.png');
+				});
 			setPostImage(img);
 		}
 	};
@@ -193,6 +216,15 @@ const AddPostForm = () => {
 							{errors.img.message}
 						</Typography>
 					)}
+					{errorImageUploadMessage && (
+						<Alert
+							variant='outlined'
+							severity='error'
+							sx={{ mt: mValue }}
+						>
+							Error: {errorImageUploadMessage}
+						</Alert>
+					)}
 					<Box sx={{ display: 'flex', justifyContent: 'flex-end', my: mValue }}>
 						<Button
 							component='label'
@@ -204,11 +236,7 @@ const AddPostForm = () => {
 							Upload Image
 							<input
 								type='file'
-								{...register('img', {
-									onChange: (e) => {
-										handleImageChange(e);
-									},
-								})}
+								onChange={(e) => handleImageChange(e)}
 								style={{ display: 'none' }}
 								multiple
 							/>
