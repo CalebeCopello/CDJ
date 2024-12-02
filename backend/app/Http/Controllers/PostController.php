@@ -49,9 +49,13 @@ class PostController extends Controller
 
         $request->validate([
             'img' => 'required|image|mimes:jpeg,jpg,gif,png|max:2048'
+        ], [
+            'img.required' => 'An image is required',
+            'img.mimes' => 'The image must be an .jpeg, .jpg, .gif, or .png',
+            'img.max' => 'The image must be at most 2MB',
         ]);
 
-        $path = $request->file('img')->store('posts/post-images', 'public');
+        $path = $request->file('img')->store('posts/images', 'public');
 
         return response()->json([
             'message' => 'upload image successfully',
