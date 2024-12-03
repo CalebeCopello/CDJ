@@ -28,22 +28,15 @@ const AddPostForm = () => {
 	const [fetchedTags, setFetchedTags] = useState<TagsType[] | undefined>([]);
 	const [postImage, setPostImage] = useState<string>('/imgs/posts/placeholder.png');
 	const [errorFetchMessage, setErrorFetchMessage] = useState<string | null>();
+	const [successFetchMessage, setSuccessFetchMessage] = useState<string | null>();
 	const [errorImageUploadMessage, setErrorImageUploadMessage] = useState<string | null>();
+	const [titleValue, setTitleValue] = useState<string>('');
+	const [slugValue, setSlugValue] = useState<string>('');
 
 	const mValue: number = 2;
 	const currentDate = dayjs();
 	const API_URL: string = import.meta.env.VITE_API_URL;
-
-	const fetchTags = () => {
-		axios
-			.get(`${API_URL}/tags/get-all`)
-			.then((res) => {
-				setFetchedTags(() => res.data);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
-	};
+	const TOKEN = Cookies.get('CDJAuth');
 
 	const {
 		register,
@@ -56,11 +49,22 @@ const AddPostForm = () => {
 		defaultValues: {
 			title: '',
 			slug: '',
-			// img: '',
+			img: '',
 			tags: [],
 			published_at: new Date(),
 		},
 	});
+
+	const fetchTags = () => {
+		axios
+			.get(`${API_URL}/tags/get-all`)
+			.then((res) => {
+				setFetchedTags(() => res.data);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
 
 	const handleInsertTags = (tag: string) => {
 		const currentTags = getValues('tags') || [];
@@ -69,13 +73,55 @@ const AddPostForm = () => {
 	};
 
 	const handlePostFormSubmit = (values: z.infer<typeof postFormSchema>) => {
+		setErrorFetchMessage(() => null);
+		setSuccessFetchMessage(() => null);
 		console.log(values);
+		axios
+			.post(
+				`${API_URL}/post/add`,
+				{
+					title: values.title,
+					slug: values.slug,
+					published_at: values.published_at,
+					tags: values.tags,
+					body: values.body,
+					img: values.img,
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: TOKEN,
+					},
+				}
+			)
+			.then((res) => {
+				console.debug('Post Form Submit Success Object:', res);
+				setSuccessFetchMessage(() => 'Post Added');
+			})
+			.catch((err) => {
+				if (err.response) {
+					console.error(`Post From Submit Error Data:`, err.response.data.errors);
+					console.error(`Post From Submit Error Status:`, err.response.status);
+					console.error(`Post From Submit Error Headers:`, err.response.headers);
+					if (err.response.status === 404) {
+						setErrorFetchMessage(() => 'API route not found: 404');
+					} else {
+						const errorMessages = Object.values(err.response.data.errors).flat().join(' ');
+						setErrorFetchMessage(() => errorMessages || 'An unknown error occurred.');
+					}
+				} else if (err.request) {
+					console.error(`Post Form Submit No Response`, err.request);
+					setErrorFetchMessage(() => 'API server not responding');
+				} else {
+					console.error(`Post Form Submit Error Message`, err.message);
+				}
+				console.error(`Post Form Submit Error Config:`, err.config);
+			});
 	};
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setErrorImageUploadMessage(() => '');
 		const file = e.target.files?.[0];
-		const TOKEN = Cookies.get('CDJAuth');
 		if (file) {
 			const img = URL.createObjectURL(file);
 			const formData = new FormData();
@@ -128,7 +174,14 @@ const AddPostForm = () => {
 							<TextField
 								fullWidth
 								label='Title'
-								{...register('title')}
+								value={titleValue}
+								onChange={(e) => {
+									const value = e.target.value;
+									setTitleValue(() => value);
+									setSlugValue(() => value.replace(/ /g, '-'));
+									setValue('title', value, { shouldValidate: true });
+									setValue('slug', value.replace(/ /g, '-'), {shouldValidate: true})
+								}}
 								helperText={errors.title ? errors.title.message : ''}
 								error={!!errors.title}
 								sx={{ mb: mValue }}
@@ -136,7 +189,12 @@ const AddPostForm = () => {
 							<TextField
 								fullWidth
 								label='Slug'
-								{...register('slug')}
+								value={slugValue}
+								onChange={(e) => {
+									const value = e.target.value;
+									setSlugValue(() => value.replace(/ /g, '-'));
+									setValue('slug', value.replace(/ /g, '-'), {shouldValidate: true})
+								}}
 								helperText={errors.slug ? errors.slug.message : ''}
 								error={!!errors.slug}
 								sx={{ mb: mValue }}
@@ -178,9 +236,13 @@ const AddPostForm = () => {
 							{fetchedTags?.map((value: TagsType, index: number) => (
 								<FormControlLabel
 									key={index}
-									control={<Checkbox checked={getValues('tags')?.includes(value.name) || false} />}
+									control={
+										<Checkbox
+											onClick={() => handleInsertTags(value.name)}
+											checked={getValues('tags')?.includes(value.name) || false}
+										/>
+									}
 									label={value.name}
-									onClick={() => handleInsertTags(value.name)}
 								/>
 							))}
 						</Box>
@@ -267,6 +329,24 @@ const AddPostForm = () => {
 						)}
 					</Box>
 					<Divider sx={{ mb: mValue }} />
+					{errorFetchMessage && (
+						<Alert
+							variant='outlined'
+							severity='error'
+							sx={{ mb: mValue }}
+						>
+							{errorFetchMessage}
+						</Alert>
+					)}
+					{successFetchMessage && (
+						<Alert
+							variant='outlined'
+							severity='success'
+							sx={{ mb: mValue }}
+						>
+							{successFetchMessage}
+						</Alert>
+					)}
 					<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: mValue }}>
 						<Button
 							variant='contained'
