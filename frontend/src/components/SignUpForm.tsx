@@ -11,6 +11,8 @@ import { signUpFormSchema } from '../libs/schemas';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+import { redirect } from 'react-router-dom';
+
 interface SignUpFormErrorResponse {
 	[key: string]: string[];
 }
@@ -49,13 +51,14 @@ const SignUpForm = () => {
 				console.debug('SignUp Form Submit Success Object:', res);
 				const TOKEN: string = `Bearer ${res.data.token.plainTextToken}`;
 				Cookies.set('CDJAuth', TOKEN, { sameSite: 'strict', expires: 365 });
+				redirect('/user');
 			})
 			.catch((err) => {
 				if (err.response) {
 					console.error(`From Submit Error Data:`, err.response.data.errors);
 					console.error(`From Submit Error Status:`, err.response.status);
 					if (err.response.status === 404) {
-						setApiNoConnectionMessage(() => 'API route not found: 404')
+						setApiNoConnectionMessage(() => 'API route not found: 404');
 					}
 					console.error(`From Submit Error Headers:`, err.response.headers);
 					setSignUpFormErrorMessage(() => err.response.data.errors);
