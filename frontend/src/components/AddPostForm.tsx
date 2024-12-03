@@ -180,7 +180,7 @@ const AddPostForm = () => {
 									setTitleValue(() => value);
 									setSlugValue(() => value.replace(/ /g, '-'));
 									setValue('title', value, { shouldValidate: true });
-									setValue('slug', value.replace(/ /g, '-'), {shouldValidate: true})
+									setValue('slug', value.replace(/ /g, '-'), { shouldValidate: true });
 								}}
 								helperText={errors.title ? errors.title.message : ''}
 								error={!!errors.title}
@@ -193,7 +193,7 @@ const AddPostForm = () => {
 								onChange={(e) => {
 									const value = e.target.value;
 									setSlugValue(() => value.replace(/ /g, '-'));
-									setValue('slug', value.replace(/ /g, '-'), {shouldValidate: true})
+									setValue('slug', value.replace(/ /g, '-'), { shouldValidate: true });
 								}}
 								helperText={errors.slug ? errors.slug.message : ''}
 								error={!!errors.slug}
