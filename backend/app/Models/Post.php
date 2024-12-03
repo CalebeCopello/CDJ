@@ -9,6 +9,8 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $table = 'posts';
+
     protected $fillable = [
         'user_id',
         'slug',
@@ -18,4 +20,9 @@ class Post extends Model
         'published_at',
         'is_published',
     ];
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'post_tags');
+    }
 }
