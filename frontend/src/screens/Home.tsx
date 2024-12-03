@@ -1,5 +1,6 @@
 import { Box, Stack } from '@mui/material';
 import NavBar from '../components/NavBar';
+import PostsList from '../components/PostsList';
 
 const Home = () => {
 	return (
@@ -8,7 +9,7 @@ const Home = () => {
 				<NavBar />
 			</Box>
 			<Stack component={'main'}>
-				<main>Home</main>
+				<PostsList />
 			</Stack>
 		</>
 	);
