@@ -11,6 +11,8 @@ import { signInFormSchema } from '../libs/schemas';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+import { redirect } from 'react-router-dom';
+
 const SignInForm = () => {
 	const mbValue: number = 2;
 	const API_URL = import.meta.env.VITE_API_URL;
@@ -40,6 +42,7 @@ const SignInForm = () => {
 				console.debug('SignUp Form Submit Success Object:', res);
 				const TOKEN: string = `Bearer ${res.data.token.plainTextToken}`;
 				Cookies.set('CDJAuth', TOKEN, { sameSite: 'strict', expires: 365 });
+				redirect('/user');
 			})
 			.catch((err) => {
 				setSignInFormErrorMessage(() => 'Email or Password incorrect');
