@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
-    public function addPost(Request $request) {
+    public function addPost(Request $request, PostTagController $postTagController) {
         
         if(!$request->user()->is_admin) {
             return response()->json([
@@ -16,25 +16,31 @@ class PostController extends Controller
             ], 403);
         }
 
+        // dd($request);
+
         $fields = $request->validate([
-            'slug' => 'required|unique:posts,slug',
             'title' => 'required|unique:posts,title',
-            'body' => 'required',
-            'img' => 'required',
+            'slug' => 'required|unique:posts,slug',
             'published_at' => 'required',
+            'tags' => 'required|array',
+            'img' => 'required',
+            'body' => 'required',
         ], [
-            'slug.required' => 'The slug is required.',
-            'slug.unique' => 'The slug must be unique.',
             'title.required' => 'The title is required.',
             'title.unique' => 'The title must be unique.',
-            'body.required' => 'The body text is required',
+            'slug.required' => 'The slug is required.',
+            'slug.unique' => 'The slug must be unique.',
+            'tags.required' => 'Tag(s) is/are required',
             'img.required' => 'An image is required',
             'published_at.required' => 'A date is required',
+            'body.required' => 'The body text is required',
         ]);
 
         $fields = array_merge($fields, [ 'user_id' => $request->user()->id]);
 
         $post = Post::create($fields);
+
+        $postTagController->addTagsToPost($request, $post);
 
         return response()->json($post, 201);
     }
