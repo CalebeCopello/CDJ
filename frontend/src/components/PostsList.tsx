@@ -1,9 +1,42 @@
 import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Grid2, Chip, Box } from '@mui/material';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+interface PostType {
+	body: string,
+	created_at: Date,
+	id: number,
+	img: string,
+	is_published?: boolean,
+	published_at: Date,
+	slug: string,
+	title: string,
+	updated_at: Date,
+	user_id: number,
+	tags: string[],
+}
 
 const PostsList = () => {
-	const posts: string[] = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque mattis at orci eu euismod. Donec gravida condimentum velit, ut ultrices orci luctus quis. Sed a nisl augue. Morbi eu justo tempus, laoreet mauris vel, scelerisque dolor.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque mattis at orci eu euismod. Donec gravida condimentum velit, ut ultrices orci luctus quis. Sed a nisl augue. Morbi eu justo tempus, laoreet mauris vel, scelerisque dolor.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque mattis at orci eu euismod. Donec gravida condimentum velit, ut ultrices orci luctus quis. Sed a nisl augue. Morbi eu justo tempus, laoreet mauris vel, scelerisque dolor.', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque mattis at orci eu euismod. Donec gravida condimentum velit, ut ultrices orci luctus quis. Sed a nisl augue. Morbi eu justo tempus, laoreet mauris vel, scelerisque dolor.', '42', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18'];
-	const tags: string[] = ['PHP', 'JavaScript', 'TypeScript', 'ReactJS'];
+	const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false);
+	const [fetchedPosts, setFetchedPosts] = useState<PostType[] | null>(null)
+
+	const STORAGE_URL: string = import.meta.env.VITE_API_STORAGE_URL;
+	const API_URL: string = import.meta.env.VITE_API_URL;
 	const mValue: number = 2;
+
+	useEffect(() => {
+		setIsPageLoaded(true);
+		axios
+			.get(`${API_URL}/post/get-all`)
+			.then((res) => {
+				console.log(res.data);
+				setFetchedPosts(() => res.data)
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+		}, []);
+		
 	return (
 		<>
 			<Grid2
@@ -14,11 +47,11 @@ const PostsList = () => {
 				alignSelf='center'
 				sx={{ mt: mValue }}
 			>
-				{posts.map((value, index) => (
+				{isPageLoaded && fetchedPosts?.map((value:PostType, index) => (
 					<Card
 						key={index}
 						sx={{
-							maxWidth: 380,
+							width: 380,
 							transition: 'transform 0.1s ease-in-out',
 							'&:hover': {
 								transform: 'scale(1.03)',
@@ -30,16 +63,16 @@ const PostsList = () => {
 							component='img'
 							alt='placeholder'
 							height='160'
-							image='/imgs/posts/placeholder.png'
+							image={`${STORAGE_URL}/${value.img}`}
 						/>
 						<CardHeader
-							title={value.length > 50 ? `${value.slice(0, 110)}...` : value}
+							title={value.title.length > 50 ? `${value.title.slice(0, 110)}...` : value.title}
 							titleTypographyProps={{ fontSize: 18, fontWeight: 500 }}
 							sx={{ height: 80 }}
 						/>
 						<CardContent>
 							<Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 2, rowGap: 0.5 }}>
-								{tags.map((tag, index) => (
+								{value.tags.map((tag, index) => (
 									<Chip
 										key={index}
 										variant='outlined'
