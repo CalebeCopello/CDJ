@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\PostTag;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Storage;
+
+use function Pest\Laravel\json;
 
 class PostController extends Controller
 {
@@ -16,7 +20,6 @@ class PostController extends Controller
             ], 403);
         }
 
-        // dd($request);
 
         $fields = $request->validate([
             'title' => 'required|unique:posts,title',
@@ -67,5 +70,23 @@ class PostController extends Controller
             'message' => 'upload image successfully',
             'path' => $path
         ], 200);
+    }
+
+    public function getPosts() {
+        $posts = Post::all()->toArray();
+        $tagsNamesArray = Tag::all()->pluck('name', 'id')->toArray();
+        $postTags = PostTag::all()->groupBy('post_id')->map(fn($tags) => $tags->pluck('tag_id'))->toArray();
+        
+        $postTagsArray = [];
+        foreach ($postTags as $postId => $tagsIds) {
+            $postTagsArray[$postId] = array_map(fn($tagId) => $tagsNamesArray[$tagId], $tagsIds);
+        }
+        
+        foreach ($posts as &$post) {
+            $postId = $post['id'];
+            $post['tags'] = $postTagsArray[$postId];
+        }
+
+        return response($posts,200);
     }
 }
