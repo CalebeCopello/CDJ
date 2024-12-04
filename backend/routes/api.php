@@ -22,9 +22,12 @@ Route::get('/auth/google/redirect', function () {
 });
 Route::get('/auth/google/callback', [AuthController::class, 'google']);
 
-// Tags Routes
-Route::get('/tags/get-all', [TagController::class, 'getTags']);
+// Posts Routes
+Route::get('/post/get-all', [PostController::class, 'getPosts']);
 
+// Tags Routes
+
+Route::get('/tags/get-all', [TagController::class, 'getTags']);
 // User Routes
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/signin', [AuthController::class, 'signin']);
