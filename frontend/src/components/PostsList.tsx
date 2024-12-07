@@ -1,20 +1,7 @@
 import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Grid2, Chip, Box } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-
-interface PostType {
-	body: string,
-	created_at: Date,
-	id: number,
-	img: string,
-	is_published?: boolean,
-	published_at: Date,
-	slug: string,
-	title: string,
-	updated_at: Date,
-	user_id: number,
-	tags: string[],
-}
+import { PostType } from '../libs/types';
 
 const PostsList = () => {
 	const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false);
@@ -85,6 +72,7 @@ const PostsList = () => {
 							<Button
 								size='small'
 								variant='contained'
+								href={`/post/view/${value.slug}`}
 							>
 								Read More
 							</Button>
