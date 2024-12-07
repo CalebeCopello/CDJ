@@ -72,7 +72,7 @@ class PostController extends Controller
         ], 200);
     }
 
-    public function getPosts() {
+    public function getAllPosts() {
         $posts = Post::all()->toArray();
         $tagsNamesArray = Tag::all()->pluck('name', 'id')->toArray();
         $postTags = PostTag::all()->groupBy('post_id')->map(fn($tags) => $tags->pluck('tag_id'))->toArray();
@@ -88,5 +88,20 @@ class PostController extends Controller
         }
 
         return response($posts,200);
+    }
+
+    public function getPost(Request $request, string $slug) {
+        $post = Post::whereRaw('LOWER(slug) = ?', [strtolower($slug)])->first();
+        if(!$post) {
+            return response()->json(['message' => 'Post not found'],404);
+        }
+        $tagsIds = PostTag::all()->where('post_id', $post->id)->pluck('tag_id')->toArray();
+        $tags = Tag::all()->pluck('name', 'id')->toArray();
+        
+        $postTags = array_filter(array_map(fn($i) => $tags[$i] ?? null, $tagsIds));
+        $post = $post->toArray();
+        $post['tags'] = $postTags;
+
+        return response($post,200);
     }
 }
