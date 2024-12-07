@@ -19,6 +19,7 @@ import SignUp from './screens/SignUp';
 import SignIn from './screens/SignIn';
 import User from './screens/User';
 import AddPost from './screens/AddPost';
+import Post from './screens/Post';
 
 function App() {
 	return (
@@ -45,6 +46,10 @@ function App() {
 						<Route
 							path='/post/add'
 							element={<ProtectedRoute children={<AddPost />} />}
+						/>
+						<Route
+							path='/post/view/:slug'
+							element={<Post />}
 						/>
 					</Routes>
 				</BrowserRouter>
