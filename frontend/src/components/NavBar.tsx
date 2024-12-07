@@ -7,7 +7,7 @@ import { AccountCircle, MoreVert, Search } from '@mui/icons-material';
 
 import { Logo } from '../assets/Logo';
 
-const NavgationBar = () => {
+const NavBar = () => {
 	const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
 
 	const [anchorMobileMenu, setAnchorMobileMenu] = useState<null | HTMLElement>(null);
@@ -160,4 +160,4 @@ const NavgationBar = () => {
 	);
 };
 
-export default NavgationBar;
+export default NavBar;
