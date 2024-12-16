@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PostComment;
 use Illuminate\Http\Request;
 
 class PostCommentController extends Controller
@@ -11,7 +12,16 @@ class PostCommentController extends Controller
     }
     
     public function createComments(Request $request) {
-        dd($request->user()->username);
-        return response()->json($request, 200);
+
+        $fields = $request->validate([
+            'comment' => 'required|max:2000',
+            'post_id' => 'required',
+        ], [
+            'comment.requite' => 'The comment is required',
+            'comment.max' => 'The maximum comment length is 2000 characters'
+        ]);
+        $fields = array_merge($fields, ['user_id' => $request->user()->id, 'parent_id' => $request->parent_id?? null]);
+        $comment = PostComment::create($fields);
+        return response()->json($comment, 200);
     }
 }
