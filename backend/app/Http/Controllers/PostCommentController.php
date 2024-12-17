@@ -8,7 +8,17 @@ use Illuminate\Http\Request;
 class PostCommentController extends Controller
 {
     public function getComments(Request $request) {
-        return response()->json($request, 200);
+        // dd($request->post_id);
+        $request->validate([
+            'post_id' => 'required|integer',
+        ]);
+        $comments = PostComment::where("post_id", $request->post_id)->get()->toArray();
+        if (!$comments) {
+            return response()->json([
+                'message' => 'no comments'
+            ], 200);
+        }
+        return response()->json($comments, 200);
     }
     
     public function createComments(Request $request) {
