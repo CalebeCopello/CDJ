@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PostComment;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostCommentController extends Controller
@@ -18,7 +19,14 @@ class PostCommentController extends Controller
                 'message' => 'no comments'
             ], 200);
         }
-        return response()->json($comments, 200);
+        $users = User::all()->pluck("username", "id")->toArray();
+        $return = [];
+        foreach($comments as $value) {
+            $value["username"] = $users[$value['user_id']];
+            $return[] = $value;
+        }
+        usort($return, fn($a, $b) => $a['id'] <=> $b['id']);
+        return response()->json($return, 200);
     }
     
     public function createComments(Request $request) {

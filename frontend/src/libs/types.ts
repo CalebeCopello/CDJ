@@ -18,6 +18,7 @@ interface CommentType {
 	is_visible: boolean;
 	parent_id: number | null;
 	user_id: number;
+	username: string;
 	created_at: Date;
 	updated_at: Date;
 }
