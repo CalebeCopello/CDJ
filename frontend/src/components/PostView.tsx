@@ -59,7 +59,6 @@ const PostView: React.FC<PostViewProp> = ({ post }) => {
 					<Divider sx={{ mb: mValue }} />
 					<MDEditor.Markdown source={post?.body} />
 				</Paper>
-				<Divider sx={{ my: mValue }} />
 			</Container>
 		</>
 	);
