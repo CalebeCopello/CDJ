@@ -1,8 +1,11 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { PostType, CommentType } from '../libs/types';
-import { Box, CircularProgress, Container, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Container, Divider, IconButton, Typography } from '@mui/material';
+import { Reply, ThumbUpOffAlt, ThumbDownOffAlt, ThumbUpAlt, ThumbDownAlt } from '@mui/icons-material';
 import { useTheme } from '@mui/material';
+
+import dayjs from 'dayjs';
 interface PostViewProp {
 	post: PostType;
 }
@@ -21,12 +24,11 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 	const API_URL: string = import.meta.env.VITE_API_URL;
 	const mValue: number = 2;
 
-	const theme = useTheme()
+	const theme = useTheme();
 
 	const commentTreeBuilder = (commentsFetched: CommentType[]) => {
 		const commentMap: { [key: number]: CommentTreeType } = {};
 		const roots: CommentTreeType[] = [];
-
 		commentsFetched.forEach((comment) => {
 			commentMap[comment.id] = { ...comment, children: [], depth: 0 };
 		});
@@ -42,12 +44,11 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 				roots.push(commentMap[comment.id]);
 			}
 		});
-		setIsCommentsFetched(() => true)
+		setIsCommentsFetched(() => true);
 		return roots;
 	};
 
 	useEffect(() => {
-		setIsPageLoaded(() => true);
 		axios
 			.get(`${API_URL}/comment/get-all`, {
 				params: {
@@ -55,21 +56,54 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 				},
 			})
 			.then((res) => {
-				const tree = commentTreeBuilder(res.data);
-				setCommentTree(() => tree);
+				if (res.data.message !== 'no comments') {
+					const tree = commentTreeBuilder(res.data);
+					setCommentTree(() => tree);
+				}
 			})
 			.catch((err) => {
 				console.error(err);
+			})
+			.finally(() => {
+				setIsPageLoaded(() => true);
 			});
 	}, []);
 
 	const CommentNode: React.FC<{ comment: CommentTreeType }> = ({ comment }) => {
 		const childBorderStyle: string | number = comment.depth > 0 ? `1px solid ${theme.palette.secondary.main}` : 0;
-		const childPaddingStyle: number = comment.depth > 0 ? 0.5 : 0;
+		const childPaddingStyle: number = comment.depth > 0 ? 1 : 0;
+		const childDisplay: string = comment.depth >= MAX_DEPTH ? 'none' : 'flex';
 		return (
-			<Box sx={{ marginLeft: `${comment.depth * 10}px`,  marginTop: mValue, borderLeft: childBorderStyle, paddingLeft: childPaddingStyle}}>
+			<Box sx={{ marginLeft: `${comment.depth * 10}px`, borderLeft: childBorderStyle, paddingLeft: childPaddingStyle }}>
 				<Box>
-					<Typography variant='subtitle2'>@{comment.username}:</Typography> {comment.comment}
+					<Box>
+						<Typography variant='subtitle2'>@{comment.username}:</Typography>
+						<Typography variant='subtitle2'>StartDate: {dayjs(comment.updated_at).format('YYMM.DD @ hh:mm')}:</Typography>
+					</Box>
+					<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>
+						<Box sx={{ marginBottom: 1 }}>{comment.comment}</Box>
+						<Box sx={{ display: 'flex' }}>
+							<IconButton
+								aria-label='like'
+								size='small'
+							>
+								<ThumbUpOffAlt />
+							</IconButton>
+							<IconButton
+								aria-label='dislike'
+								size='small'
+							>
+								<ThumbDownOffAlt />
+							</IconButton>
+							<Button
+								size='small'
+								startIcon={<Reply />}
+								sx={{ display: childDisplay }}
+							>
+								Reply
+							</Button>
+						</Box>
+					</Box>
 				</Box>
 				{comment.children &&
 					comment.children.length > 0 &&
@@ -94,8 +128,9 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 					>
 						Comments
 					</Typography>
-					{isPageLoaded && isCommentsFetched ? (
-						commentTree.length > 0 ? (
+
+					{isPageLoaded ? (
+						isCommentsFetched ? (
 							commentTree.map((comment: CommentTreeType) => (
 								<CommentNode
 									key={comment.id}
@@ -103,10 +138,17 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 								/>
 							))
 						) : (
-							<Box>No comments yet...</Box>
+							<Box>
+								<Typography
+									variant='body2'
+									align='center'
+								>
+									No comments yet :(
+								</Typography>
+							</Box>
 						)
 					) : (
-						<Box sx={{display: 'flex', justifyContent: 'center'}}>
+						<Box sx={{ display: 'flex', justifyContent: 'center' }}>
 							<CircularProgress />
 						</Box>
 					)}
