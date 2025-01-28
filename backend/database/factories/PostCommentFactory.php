@@ -28,8 +28,16 @@ class PostCommentFactory extends Factory
         return [
             'user_id' => $userId,
             'post_id' => $postId,
-            'parent_id' => fake()->boolean(70) ? PostComment::inRandomOrder()->value('id') : null,
+            'parent_id' => fake()->boolean(10) ? PostComment::inRandomOrder()->value('id') : null,
             "comment" => fake()->text(255),
         ];
     }
+    public function withParent(): self
+    {
+    return $this->state(function (array $attributes) {
+        return [
+            'parent_id' => PostComment::inRandomOrder()->value('id'),
+        ];
+    });
+}
 }
