@@ -29,10 +29,10 @@ const PostView: React.FC<PostViewProp> = ({ post }) => {
 						align='right'
 					>
 						<Tooltip
-							title={`Published at: ${dayjs(post?.published_at).format('YYYY-MM-DD')}`}
+							title={`Published at: ${dayjs(post?.created_at).format('YYYY-MMM-DD')}`}
 							arrow
 						>
-							<span>Stardate: {dayjs(post?.published_at).format('YYMM.DD')}</span>
+							<span>Stardate: {dayjs(post?.created_at).format('YYMM.DD')}</span>
 						</Tooltip>
 					</Typography>
 					<Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 2, rowGap: 0.5 }}>

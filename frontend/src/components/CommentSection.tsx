@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { PostType, CommentType } from '../libs/types';
-import { Box, Button, CircularProgress, Container, Divider, IconButton, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Container, Divider, IconButton, Tooltip, Typography } from '@mui/material';
 import { Reply, ThumbUpOffAlt, ThumbDownOffAlt, ThumbUpAlt, ThumbDownAlt } from '@mui/icons-material';
 import { useTheme } from '@mui/material';
 
@@ -76,9 +76,11 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		return (
 			<Box sx={{ marginLeft: `${comment.depth * 10}px`, borderLeft: childBorderStyle, paddingLeft: childPaddingStyle }}>
 				<Box>
-					<Box>
-						<Typography variant='subtitle2'>@{comment.username}:</Typography>
-						<Typography variant='subtitle2'>StartDate: {dayjs(comment.updated_at).format('YYMM.DD @ hh:mm')}:</Typography>
+					<Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between"  }}>
+						<Typography variant='subtitle2'>@{comment.username}</Typography>
+						<Tooltip title={`Published at: ${dayjs(post?.created_at).format('YYYY-MMM-DD')}`}>
+							<Typography variant='subtitle2'>StartDate: {dayjs(comment.created_at).format('YYMM.DD @ hh:mm')}:</Typography>
+							</Tooltip>
 					</Box>
 					<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>
 						<Box sx={{ marginBottom: 1 }}>{comment.comment}</Box>
