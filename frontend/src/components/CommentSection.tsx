@@ -17,6 +17,7 @@ interface CommentTreeType extends CommentType {
 
 interface CommentBoxProps {
 	parent_id?: number;
+	comment?: string;
 }
 
 const CommentSection: React.FC<PostViewProp> = ({ post }) => {
@@ -107,12 +108,12 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 								size='small'
 								startIcon={<Reply />}
 								sx={{ display: childDisplay }}
-								onClick={() => setReply(() => true)}
+								onClick={() => setReply(() => !reply)}
 							>
 								Reply
 							</Button>
 						</Box>
-						{reply && <CommentBox parent_id={comment.id}/>}
+						{reply && <CommentBox parent_id={comment.id} />}
 					</Box>
 				</Box>
 				{comment.children &&
@@ -127,23 +128,42 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		);
 	};
 
-	const CommentBox: React.FC<CommentBoxProps> = ({parent_id}) => {
-		const postComment = (parent_id?: CommentBoxProps['parent_id']) => {
-			console.log(typeof parent_id)
-		}
+	const CommentBox: React.FC<CommentBoxProps> = ({ parent_id }) => {
+		const [comment, setComment] = useState<string | undefined>();
+
+		const postComment = (parent_id?: CommentBoxProps['parent_id'], comment?: CommentBoxProps['comment']) => {
+			console.log(parent_id, comment);
+		};
 		return (
 			<Box sx={{ my: mValue }}>
 				<Box>
 					<TextField
-						label={parent_id ? ('Add a Reply') : ('Add a Comment')}
+						id='comment'
+						value={comment}
+						label={parent_id ? 'Add a Reply' : 'Add a Comment'}
 						variant='outlined'
 						fullWidth
 						multiline
 						sx={{ mb: 1 }}
+						onChange={(e) => setComment(e.target.value)}
 					/>
 				</Box>
 				<Box sx={{ display: 'flex', justifyContent: 'end' }}>
-					<Button variant='outlined' onClick={() => postComment(parent_id)}>{parent_id ? ('Reply') : ('Comment')}</Button>
+					<Button
+						variant='outlined'
+						color='error'
+						onClick={() => setComment(() => ' ')}
+						sx={{ mr: mValue }}
+					>
+						Cancel
+					</Button>
+					<Button
+						variant='outlined'
+						onClick={() => postComment(parent_id, comment)}
+						disabled={comment && comment?.trim().length > 0 ? false : true}
+					>
+						{parent_id ? 'Reply' : 'Comment'}
+					</Button>
 				</Box>
 			</Box>
 		);
