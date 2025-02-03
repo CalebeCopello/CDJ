@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { PostType, CommentType } from '../libs/types';
-import { Box, Button, CircularProgress, Container, Divider, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Container, Divider, IconButton, TextField, Tooltip, Typography } from '@mui/material';
 import { Reply, ThumbUpOffAlt, ThumbDownOffAlt, ThumbUpAlt, ThumbDownAlt } from '@mui/icons-material';
 import { useTheme } from '@mui/material';
 
@@ -13,6 +13,10 @@ interface PostViewProp {
 interface CommentTreeType extends CommentType {
 	children: CommentType[];
 	depth: number;
+}
+
+interface CommentBoxProps {
+	parent_id?: number;
 }
 
 const CommentSection: React.FC<PostViewProp> = ({ post }) => {
@@ -73,14 +77,16 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		const childBorderStyle: string | number = comment.depth > 0 ? `1px solid ${theme.palette.secondary.main}` : 0;
 		const childPaddingStyle: number = comment.depth > 0 ? 1 : 0;
 		const childDisplay: string = comment.depth >= MAX_DEPTH ? 'none' : 'flex';
+		const [reply, setReply] = useState<boolean>(false);
+
 		return (
 			<Box sx={{ marginLeft: `${comment.depth * 10}px`, borderLeft: childBorderStyle, paddingLeft: childPaddingStyle }}>
 				<Box>
-					<Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, justifyContent: "space-between"  }}>
+					<Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' }}>
 						<Typography variant='subtitle2'>@{comment.username}</Typography>
 						<Tooltip title={`Published at: ${dayjs(post?.created_at).format('YYYY-MMM-DD')}`}>
 							<Typography variant='subtitle2'>StartDate: {dayjs(comment.created_at).format('YYMM.DD @ hh:mm')}:</Typography>
-							</Tooltip>
+						</Tooltip>
 					</Box>
 					<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>
 						<Box sx={{ marginBottom: 1 }}>{comment.comment}</Box>
@@ -101,10 +107,12 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 								size='small'
 								startIcon={<Reply />}
 								sx={{ display: childDisplay }}
+								onClick={() => setReply(() => true)}
 							>
 								Reply
 							</Button>
 						</Box>
+						{reply && <CommentBox parent_id={comment.id}/>}
 					</Box>
 				</Box>
 				{comment.children &&
@@ -115,6 +123,28 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 							comment={child}
 						/>
 					))}
+			</Box>
+		);
+	};
+
+	const CommentBox: React.FC<CommentBoxProps> = ({parent_id}) => {
+		const postComment = (parent_id?: CommentBoxProps['parent_id']) => {
+			console.log(typeof parent_id)
+		}
+		return (
+			<Box sx={{ my: mValue }}>
+				<Box>
+					<TextField
+						label={parent_id ? ('Add a Reply') : ('Add a Comment')}
+						variant='outlined'
+						fullWidth
+						multiline
+						sx={{ mb: 1 }}
+					/>
+				</Box>
+				<Box sx={{ display: 'flex', justifyContent: 'end' }}>
+					<Button variant='outlined' onClick={() => postComment(parent_id)}>{parent_id ? ('Reply') : ('Comment')}</Button>
+				</Box>
 			</Box>
 		);
 	};
@@ -130,7 +160,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 					>
 						Comments
 					</Typography>
-
+					<CommentBox />
 					{isPageLoaded ? (
 						isCommentsFetched ? (
 							commentTree.map((comment: CommentTreeType) => (
