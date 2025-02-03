@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 class PostCommentController extends Controller
 {
     public function getComments(Request $request) {
-        // dd($request->post_id);
         $request->validate([
             'post_id' => 'required|integer',
         ]);
@@ -30,7 +29,6 @@ class PostCommentController extends Controller
     }
     
     public function createComments(Request $request) {
-
         $fields = $request->validate([
             'comment' => 'required|max:2000',
             'post_id' => 'required',

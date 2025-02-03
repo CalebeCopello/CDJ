@@ -6,6 +6,7 @@ import { Reply, ThumbUpOffAlt, ThumbDownOffAlt, ThumbUpAlt, ThumbDownAlt } from 
 import { useTheme } from '@mui/material';
 
 import dayjs from 'dayjs';
+import Cookies from 'js-cookie';
 interface PostViewProp {
 	post: PostType;
 }
@@ -27,6 +28,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 
 	const MAX_DEPTH: number = 3;
 	const API_URL: string = import.meta.env.VITE_API_URL;
+	const TOKEN = Cookies.get('CDJAuth');
 	const mValue: number = 2;
 
 	const theme = useTheme();
@@ -90,7 +92,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 						</Tooltip>
 					</Box>
 					<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>
-						<Box sx={{ marginBottom: 1 }}>{comment.comment}</Box>
+						<Box sx={{ marginBottom: 1, whiteSpace: 'pre-wrap' }}>{comment.comment}</Box>
 						<Box sx={{ display: 'flex' }}>
 							<IconButton
 								aria-label='like'
@@ -132,7 +134,27 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		const [comment, setComment] = useState<string | undefined>();
 
 		const postComment = (parent_id?: CommentBoxProps['parent_id'], comment?: CommentBoxProps['comment']) => {
-			console.log(parent_id, comment);
+			axios
+				.post(
+					`${API_URL}/comment/create`,
+					{
+						post_id: post.id,
+						comment: comment,
+						parent_id: parent_id,
+					},
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: TOKEN,
+						},
+					}
+				)
+				.then((res) => {
+					console.log(res);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
 		};
 		return (
 			<Box sx={{ my: mValue }}>
