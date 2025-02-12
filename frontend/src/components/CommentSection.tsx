@@ -23,6 +23,7 @@ interface CommentBoxProps {
 
 const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 	const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false);
+	const [pageReload, setPageReload] = useState<boolean>(false);
 	const [isCommentsFetched, setIsCommentsFetched] = useState<boolean>(false);
 	const [commentTree, setCommentTree] = useState<CommentTreeType[]>([]);
 
@@ -56,6 +57,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 	};
 
 	useEffect(() => {
+		setPageReload(() => false)
 		axios
 			.get(`${API_URL}/comment/get-all`, {
 				params: {
@@ -74,7 +76,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 			.finally(() => {
 				setIsPageLoaded(() => true);
 			});
-	}, []);
+	}, [pageReload]);
 
 	const CommentNode: React.FC<{ comment: CommentTreeType }> = ({ comment }) => {
 		const childBorderStyle: string | number = comment.depth > 0 ? `1px solid ${theme.palette.secondary.main}` : 0;
@@ -151,6 +153,8 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 				)
 				.then((res) => {
 					console.log(res);
+					setIsPageLoaded(() => false)
+					setPageReload(() => true)
 				})
 				.catch((err) => {
 					console.error(err);
