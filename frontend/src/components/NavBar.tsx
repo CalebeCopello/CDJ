@@ -23,6 +23,8 @@ const NavBar = () => {
 	const location = useLocation();
 	const theme = useTheme();
 
+	document.body.style.backgroundColor = theme.palette.background.default;
+
 	//Debugging like a noob
 	// console.log(theme);
 	// console.log(location);
