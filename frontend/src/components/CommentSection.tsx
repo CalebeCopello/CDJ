@@ -1,9 +1,8 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { PostType, CommentType } from '../libs/types';
-import { Box, Button, CircularProgress, Container, Divider, IconButton, TextField, Tooltip, Typography } from '@mui/material';
-import { Reply, ThumbUpOffAlt, ThumbDownOffAlt, ThumbUpAlt, ThumbDownAlt } from '@mui/icons-material';
-import { useTheme } from '@mui/material';
+import { Box, Button, CircularProgress, Container, IconButton, TextField, Tooltip, Typography, useTheme } from '@mui/material';
+import { Reply, ThumbUpOffAlt, ThumbDownOffAlt } from '@mui/icons-material';
 
 import dayjs from 'dayjs';
 import Cookies from 'js-cookie';
@@ -83,6 +82,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		const childPaddingStyle: number = comment.depth > 0 ? 1 : 0;
 		const childDisplay: string = comment.depth >= MAX_DEPTH ? 'none' : 'flex';
 		const [reply, setReply] = useState<boolean>(false);
+		// console.log(theme.palette)
 
 		return (
 			<Box sx={{ marginLeft: `${comment.depth * 10}px`, borderLeft: childBorderStyle, paddingLeft: childPaddingStyle }}>
