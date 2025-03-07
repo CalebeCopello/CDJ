@@ -2,13 +2,15 @@ import { useState } from 'react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import useIsUserSigned from '../hooks/useIsUserSigned';
+
 import { Box, AppBar, Toolbar, Typography, InputBase, IconButton, Button, Stack, useTheme, Menu, MenuItem } from '@mui/material';
 import { AccountCircle, MoreVert, Search } from '@mui/icons-material';
 
 import { Logo } from '../assets/Logo';
 
 const NavBar = () => {
-	const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
+	const { isUserSigned } = useIsUserSigned();
 
 	const [anchorMobileMenu, setAnchorMobileMenu] = useState<null | HTMLElement>(null);
 	const openMobileMenu = Boolean(anchorMobileMenu);
@@ -38,7 +40,10 @@ const NavBar = () => {
 					sx={{ borderRadius: 1 }}
 				>
 					<Toolbar>
-						<IconButton disabled={location.pathname === '/'} onClick={() => navigate('/')}>
+						<IconButton
+							disabled={location.pathname === '/'}
+							onClick={() => navigate('/')}
+						>
 							<Logo
 								fill={theme.palette.background.default}
 								sx={{ fontSize: 46 }}
@@ -78,7 +83,7 @@ const NavBar = () => {
 						</Box>
 						<Box flexGrow={`1`} />
 						<Box>
-							{isUserLogged ? (
+							{isUserSigned ? (
 								<IconButton
 									size='large'
 									aria-label={`user's account`}
@@ -114,7 +119,7 @@ const NavBar = () => {
 													navigate(`/signup`);
 												}}
 												disabled={location.pathname === '/signup'}
-												>
+											>
 												Sign Up
 											</MenuItem>
 											<MenuItem
