@@ -12,13 +12,22 @@ import { Logo } from '../assets/Logo';
 const NavBar = () => {
 	const { isUserSigned } = useIsUserSigned();
 
+	//Menus logic
 	const [anchorMobileMenu, setAnchorMobileMenu] = useState<null | HTMLElement>(null);
+	const [anchorUserMenu, setAnchorUserMenu] = useState<null | HTMLElement>(null);
 	const openMobileMenu = Boolean(anchorMobileMenu);
+	const openUserMenu = Boolean(anchorUserMenu);
 	const closeMobileMenu = () => {
 		setAnchorMobileMenu(null);
 	};
+	const closerUserMenu = () => {
+		setAnchorUserMenu(null);
+	};
 	const handleClickMobileMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorMobileMenu(e.currentTarget);
+	};
+	const handeClickUserMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
+		setAnchorUserMenu(e.currentTarget);
 	};
 
 	const navigate = useNavigate();
@@ -84,13 +93,30 @@ const NavBar = () => {
 						<Box flexGrow={`1`} />
 						<Box>
 							{isUserSigned ? (
-								<IconButton
-									size='large'
-									aria-label={`user's account`}
-									color='inherit'
-								>
-									<AccountCircle />
-								</IconButton>
+								<>
+									<IconButton
+										size='large'
+										id='user-menu-button'
+										aria-label={`user's account`}
+										color='inherit'
+										onClick={handeClickUserMenu}
+									>
+										<AccountCircle />
+									</IconButton>
+									<Menu
+										id='user-menu'
+										anchorEl={anchorUserMenu}
+										open={openUserMenu}
+										onClose={closerUserMenu}
+										MenuListProps={{
+											'aria-labelledby': 'user-menu-button',
+										}}
+									>
+										<MenuItem onClick={closerUserMenu}>Profile</MenuItem>
+										<MenuItem onClick={closerUserMenu}>Settings</MenuItem>
+										<MenuItem onClick={closerUserMenu}>SignOut</MenuItem>
+									</Menu>
+								</>
 							) : (
 								<>
 									<Box sx={{ display: { xs: 'block', md: 'none' } }}>
