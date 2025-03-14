@@ -11,5 +11,5 @@ class PostLikes extends Model
 
     protected $table = 'post_likes';
 
-    protected $fillable = ['user_id', 'post_id', 'like_value'];
+    protected $fillable = ['user_id', 'comment_id', 'like_value'];
 }
