@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import useIsUserSigned from '../hooks/useIsUserSigned';
 
-import { Box, AppBar, Toolbar, Typography, InputBase, IconButton, Button, Stack, useTheme, Menu, MenuItem } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, InputBase, IconButton, Button, Stack, useTheme, Menu, MenuItem, Divider } from '@mui/material';
 import { AccountCircle, MoreVert, Search } from '@mui/icons-material';
 
 import { Logo } from '../assets/Logo';
@@ -112,9 +112,17 @@ const NavBar = () => {
 											'aria-labelledby': 'user-menu-button',
 										}}
 									>
-										<MenuItem onClick={closerUserMenu}>Profile</MenuItem>
+										<MenuItem
+											onClick={() => {
+												closerUserMenu();
+												navigate('/user');
+											}}
+										>
+											Profile
+										</MenuItem>
 										<MenuItem onClick={closerUserMenu}>Settings</MenuItem>
-										<MenuItem onClick={closerUserMenu}>SignOut</MenuItem>
+										<Divider />
+										<MenuItem onClick={closerUserMenu}>Sign Out</MenuItem>
 									</Menu>
 								</>
 							) : (
