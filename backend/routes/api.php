@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostLikesController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -53,4 +54,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Comment
     Route::post('/comment/create', [PostCommentController::class, 'createComments']);
 
+    //Likes
+    Route::post('/like/change', [PostLikesController::class, 'changeLikeValue']);
 });
