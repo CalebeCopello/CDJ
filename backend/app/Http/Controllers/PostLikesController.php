@@ -26,4 +26,16 @@ class PostLikesController extends Controller
         PostLikes::updateOrCreate(['user_id' => $fields["user_id"], 'comment_id' => $fields['comment_id']], ['like_value' => $fields['like_value']]);
         return response()->json(['message' => 'Liked/Disliked Created or Updated', 'code' => '1'], 200);
     }
+
+    public function getLikeValue (Request $request) {
+        $fields = $request->validate([
+            'comments.*' => 'required|exists:post_comments,id'
+        ], [
+            'comments.*.required' => 'Comment id is required',
+            'comments.*.exists' => 'Comment id :input does not exist'
+        ]);
+
+        $likes = PostLikes::whereIn('comment_id', $fields["comments"])->get()->groupBy('comment_id');
+        return response()->json($likes, 200);
+    }
 }
