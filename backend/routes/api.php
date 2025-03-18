@@ -41,6 +41,9 @@ Route::get('/tags/get-all', [TagController::class, 'getTags']);
 // Comments Routes
 Route::get('/comment/get-all', [PostCommentController::class, 'getComments']);
 
+//Likes
+Route::get('/like/get', [PostLikesController::class, 'getLikeValue']);
+
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
     // Users
