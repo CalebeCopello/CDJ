@@ -23,4 +23,12 @@ interface CommentType {
 	updated_at: Date;
 }
 
-export type { PostType, CommentType };
+interface LikesType {
+	id: number;
+	comment_id: number;
+	like_value: number;
+	created_at: Date;
+	updated_at: Date;
+}
+
+export type { PostType, CommentType, LikesType };
