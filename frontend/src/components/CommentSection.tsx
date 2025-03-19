@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import React, { useState, useEffect } from 'react';
 
-import { PostType, CommentType } from '../libs/types';
+import { PostType, CommentType, LikesType } from '../libs/types';
 
 import useIsUserSigned from '../hooks/useIsUserSigned';
 
@@ -26,17 +26,19 @@ interface CommentBoxProps {
 }
 
 const CommentSection: React.FC<PostViewProp> = ({ post }) => {
+	const theme = useTheme();
+	const { isUserSigned } = useIsUserSigned();
+
 	const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false);
 	const [pageReload, setPageReload] = useState<boolean>(false);
 	const [isCommentsFetched, setIsCommentsFetched] = useState<boolean>(false);
 	const [commentTree, setCommentTree] = useState<CommentTreeType[]>([]);
+	const [commentLike, setCommentLike] = useState<LikesType[]>([]);
 
 	const MAX_DEPTH: number = 3;
 	const API_URL: string = import.meta.env.VITE_API_URL;
 	const TOKEN = Cookies.get('CDJAuth');
 	const mValue: number = 2;
-
-	const theme = useTheme();
 
 	const commentTreeBuilder = (commentsFetched: CommentType[]) => {
 		const commentMap: { [key: number]: CommentTreeType } = {};
@@ -60,8 +62,27 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		return roots;
 	};
 
+	const commentLikesFetch = (tree: CommentTreeType[]) => {
+		const arrayIds: Array<number> = [];
+		let likes: LikesType[] = [];
+		tree.map((tree: CommentTreeType) => arrayIds.push(tree.id));
+		axios
+			.get(`${API_URL}/like/get`, {
+				params: {
+					comments: arrayIds,
+				},
+			})
+			.then((res) => {
+				likes = res.data;
+				setCommentLike(() => likes);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
+
 	useEffect(() => {
-		setPageReload(() => false)
+		setPageReload(() => false);
 		axios
 			.get(`${API_URL}/comment/get-all`, {
 				params: {
@@ -71,6 +92,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 			.then((res) => {
 				if (res.data.message !== 'no comments') {
 					const tree = commentTreeBuilder(res.data);
+					commentLikesFetch(tree);
 					setCommentTree(() => tree);
 				}
 			})
@@ -81,8 +103,6 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 				setIsPageLoaded(() => true);
 			});
 	}, [pageReload]);
-
-	const {isUserSigned} = useIsUserSigned();
 
 	const CommentNode: React.FC<{ comment: CommentTreeType }> = ({ comment }) => {
 		const childBorderStyle: string | number = comment.depth > 0 ? `1px solid ${theme.palette.secondary.main}` : 0;
@@ -102,12 +122,15 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 					<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>
 						<Box sx={{ marginBottom: 1, whiteSpace: 'pre-wrap' }}>{comment.comment}</Box>
 						<Box sx={{ display: 'flex' }}>
-							<IconButton
-								aria-label='like'
-								size='small'
-							>
-								<ThumbUpOffAlt />
-							</IconButton>
+							<Box>
+								<IconButton
+									aria-label='like'
+									size='small'
+								>
+									<ThumbUpOffAlt />
+								</IconButton>
+								<LikeCommentNode id={comment.id} />
+							</Box>
 							<IconButton
 								aria-label='dislike'
 								size='small'
@@ -138,6 +161,19 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		);
 	};
 
+	const LikeCommentNode: React.FC<{ id: number }> = ({ id }) => {
+		if (isPageLoaded) {
+			let likeValue: number = 0;
+			const likes = commentLike[id];
+			likes?.forEach((e: LikesType) => {
+				likeValue += e.like_value;
+				console.log(e)
+			});
+			// console.log(commentLike[id]);
+			return likeValue;
+		}
+	};
+
 	const CommentBox: React.FC<CommentBoxProps> = ({ parent_id }) => {
 		const [comment, setComment] = useState<string | undefined>();
 
@@ -159,8 +195,8 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 				)
 				.then((res) => {
 					console.log(res);
-					setIsPageLoaded(() => false)
-					setPageReload(() => true)
+					setIsPageLoaded(() => false);
+					setPageReload(() => true);
 				})
 				.catch((err) => {
 					console.error(err);
