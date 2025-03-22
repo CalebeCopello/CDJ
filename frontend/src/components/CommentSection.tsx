@@ -122,21 +122,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 					<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>
 						<Box sx={{ marginBottom: 1, whiteSpace: 'pre-wrap' }}>{comment.comment}</Box>
 						<Box sx={{ display: 'flex' }}>
-							<Box>
-								<IconButton
-									aria-label='like'
-									size='small'
-								>
-									<ThumbUpOffAlt />
-								</IconButton>
-								<LikeCommentNode id={comment.id} />
-							</Box>
-							<IconButton
-								aria-label='dislike'
-								size='small'
-							>
-								<ThumbDownOffAlt />
-							</IconButton>
+							<LikeCommentNode id={comment.id} />
 							<Button
 								size='small'
 								startIcon={<Reply />}
@@ -167,10 +153,26 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 			const likes = commentLike[id];
 			likes?.forEach((e: LikesType) => {
 				likeValue += e.like_value;
-				console.log(e)
 			});
-			// console.log(commentLike[id]);
-			return likeValue;
+			return (
+				<Box sx={{display: 'flex', alignItems: 'center'}}>
+					<IconButton
+						aria-label='like'
+						size='small'
+						onClick={() => handleLikes(1, id)}
+						>
+						<ThumbUpOffAlt />
+					</IconButton>
+					<Typography>{likeValue}</Typography>
+					<IconButton
+						aria-label='dislike'
+						size='small'
+						onClick={() => handleLikes(-1, id)}
+						>
+						<ThumbDownOffAlt />
+					</IconButton>
+				</Box>
+			);
 		}
 	};
 
@@ -237,6 +239,10 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 			</Box>
 		);
 	};
+
+	const handleLikes = (value: number, id: number) => {
+		console.log(value, id);
+	}
 
 	return (
 		<>
