@@ -155,12 +155,12 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 				likeValue += e.like_value;
 			});
 			return (
-				<Box sx={{display: 'flex', alignItems: 'center'}}>
+				<Box sx={{ display: 'flex', alignItems: 'center' }}>
 					<IconButton
 						aria-label='like'
 						size='small'
 						onClick={() => handleLikes(1, id)}
-						>
+					>
 						<ThumbUpOffAlt />
 					</IconButton>
 					<Typography>{likeValue}</Typography>
@@ -168,7 +168,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 						aria-label='dislike'
 						size='small'
 						onClick={() => handleLikes(-1, id)}
-						>
+					>
 						<ThumbDownOffAlt />
 					</IconButton>
 				</Box>
@@ -241,8 +241,27 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 	};
 
 	const handleLikes = (value: number, id: number) => {
-		console.log(value, id);
-	}
+		axios
+			.post(
+				`${API_URL}/like/change`,
+				{
+					like_value: value,
+					comment_id: id,
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: TOKEN,
+					},
+				}
+			)
+			.then((res) => {
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	};
 
 	return (
 		<>
