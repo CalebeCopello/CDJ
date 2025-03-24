@@ -25,6 +25,7 @@ interface CommentType {
 
 interface LikesType {
 	id: number;
+	user_id: number;
 	comment_id: number;
 	like_value: number;
 	created_at: Date;
