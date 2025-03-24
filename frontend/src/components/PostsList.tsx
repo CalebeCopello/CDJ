@@ -1,11 +1,12 @@
-import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Grid2, Chip, Box } from '@mui/material';
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Grid2, Chip, Box, CardActionArea } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { PostType } from '../libs/types';
+import { Link } from 'react-router-dom';
 
 const PostsList = () => {
 	const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false);
-	const [fetchedPosts, setFetchedPosts] = useState<PostType[] | null>(null)
+	const [fetchedPosts, setFetchedPosts] = useState<PostType[] | null>(null);
 
 	const STORAGE_URL: string = import.meta.env.VITE_API_STORAGE_URL;
 	const API_URL: string = import.meta.env.VITE_API_URL;
@@ -16,14 +17,13 @@ const PostsList = () => {
 		axios
 			.get(`${API_URL}/post/get-all`)
 			.then((res) => {
-				console.log(res.data);
-				setFetchedPosts(() => res.data)
+				setFetchedPosts(() => res.data);
 			})
 			.catch((err) => {
 				console.error(err);
 			});
-		}, []);
-		
+	}, []);
+
 	return (
 		<>
 			<Grid2
@@ -34,51 +34,56 @@ const PostsList = () => {
 				alignSelf='center'
 				sx={{ mt: mValue }}
 			>
-				{isPageLoaded && fetchedPosts?.map((value:PostType, index) => (
-					<Card
-						key={index}
-						sx={{
-							width: 380,
-							transition: 'transform 0.1s ease-in-out',
-							'&:hover': {
-								transform: 'scale(1.03)',
-								zIndex: 1000,
-							},
-						}}
-					>
-						<CardMedia
-							component='img'
-							alt='placeholder'
-							height='160'
-							image={`${STORAGE_URL}/${value.img}`}
-						/>
-						<CardHeader
-							title={value.title.length > 50 ? `${value.title.slice(0, 110)}...` : value.title}
-							titleTypographyProps={{ fontSize: 18, fontWeight: 500 }}
-							sx={{ height: 80 }}
-						/>
-						<CardContent>
-							<Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 2, rowGap: 0.5 }}>
-								{value.tags.map((tag, index) => (
-									<Chip
-										key={index}
-										variant='outlined'
-										label={tag}
+				{isPageLoaded &&
+					fetchedPosts?.map((value: PostType, index) => (
+						<Card
+							key={index}
+							sx={{
+								width: 320,
+								transition: 'transform 0.1s ease-in-out',
+								'&:hover': {
+									transform: 'scale(1.03)',
+									zIndex: 1000,
+								},
+							}}
+						>
+							<CardActionArea>
+								<Link to={`/post/view/${value.slug}`}>
+									<CardMedia
+										component='img'
+										alt='placeholder'
+										height='160'
+										image={`${STORAGE_URL}/${value.img}`}
 									/>
-								))}
-							</Box>
-						</CardContent>
-						<CardActions sx={{ display: 'flex', justifySelf: 'flex-end', justifyContent: 'end' }}>
-							<Button
-								size='small'
-								variant='contained'
-								href={`/post/view/${value.slug}`}
-							>
-								Read More
-							</Button>
-						</CardActions>
-					</Card>
-				))}
+								</Link>
+							</CardActionArea>
+							<CardHeader
+								title={value.title.length > 50 ? `${value.title.slice(0, 110)}...` : value.title}
+								titleTypographyProps={{ fontSize: 18, fontWeight: 500 }}
+								sx={{ height: 80 }}
+							/>
+							<CardContent>
+								<Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 2, rowGap: 0.5 }}>
+									{value.tags.map((tag, index) => (
+										<Chip
+											key={index}
+											variant='outlined'
+											label={tag}
+										/>
+									))}
+								</Box>
+							</CardContent>
+							<CardActions sx={{ display: 'flex', justifySelf: 'flex-end', justifyContent: 'end' }}>
+								<Button
+									size='small'
+									variant='contained'
+									href={`/post/view/${value.slug}`}
+								>
+									Read More
+								</Button>
+							</CardActions>
+						</Card>
+					))}
 			</Grid2>
 		</>
 	);
