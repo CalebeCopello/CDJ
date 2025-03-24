@@ -19,7 +19,7 @@ const useIsUserSigned = () => {
 				},
 			})
 			.then((res) => {
-				setUserInfo(() => res.data);
+				setUserInfo(() => res.data.message);
 				setIsUserSigned(() => true);
 			})
 			.catch(() => {
