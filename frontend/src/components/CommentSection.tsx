@@ -7,7 +7,7 @@ import { PostType, CommentType, LikesType } from '../libs/types';
 import useIsUserSigned from '../hooks/useIsUserSigned';
 
 import { Box, Button, CircularProgress, Container, IconButton, TextField, Tooltip, Typography, useTheme } from '@mui/material';
-import { Reply, ThumbUpOffAlt, ThumbDownOffAlt } from '@mui/icons-material';
+import { Reply, ThumbUpAlt, ThumbUpOffAlt, ThumbDownAlt, ThumbDownOffAlt } from '@mui/icons-material';
 
 import dayjs from 'dayjs';
 import Cookies from 'js-cookie';
@@ -27,12 +27,13 @@ interface CommentBoxProps {
 
 const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 	const theme = useTheme();
-	const { isUserSigned } = useIsUserSigned();
+	const { isUserSigned, userInfo } = useIsUserSigned();
 
 	const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false);
 	const [pageReload, setPageReload] = useState<boolean>(false);
 	const [isCommentsFetched, setIsCommentsFetched] = useState<boolean>(false);
 	const [commentTree, setCommentTree] = useState<CommentTreeType[]>([]);
+	const [commentRaw, setCommentRaw] = useState<CommentType>([]);
 	const [commentLike, setCommentLike] = useState<LikesType[]>([]);
 
 	const MAX_DEPTH: number = 3;
@@ -62,10 +63,10 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		return roots;
 	};
 
-	const commentLikesFetch = (tree: CommentTreeType[]) => {
+	const commentLikesFetch = (raw: CommentType) => {
 		const arrayIds: Array<number> = [];
 		let likes: LikesType[] = [];
-		tree.map((tree: CommentTreeType) => arrayIds.push(tree.id));
+		Object(raw).map((comment: CommentType) => arrayIds.push(comment.id));
 		axios
 			.get(`${API_URL}/like/get`, {
 				params: {
@@ -91,8 +92,9 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 			})
 			.then((res) => {
 				if (res.data.message !== 'no comments') {
+					setCommentRaw(() => res.data);
+					commentLikesFetch(res.data);
 					const tree = commentTreeBuilder(res.data);
-					commentLikesFetch(tree);
 					setCommentTree(() => tree);
 				}
 			})
@@ -149,9 +151,11 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 
 	const LikeCommentNode: React.FC<{ id: number }> = ({ id }) => {
 		if (isPageLoaded) {
+			let selfLikedValue: number = 0;
 			let likeValue: number = 0;
 			const likes = commentLike[id];
 			likes?.forEach((e: LikesType) => {
+				if (e.user_id == userInfo?.id) selfLikedValue = e.like_value;
 				likeValue += e.like_value;
 			});
 			return (
@@ -161,7 +165,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 						size='small'
 						onClick={() => handleLikes(1, id)}
 					>
-						<ThumbUpOffAlt />
+						{selfLikedValue == 1 ? <ThumbUpAlt /> : <ThumbUpOffAlt />}
 					</IconButton>
 					<Typography>{likeValue}</Typography>
 					<IconButton
@@ -169,7 +173,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 						size='small'
 						onClick={() => handleLikes(-1, id)}
 					>
-						<ThumbDownOffAlt />
+						{selfLikedValue == -1 ? <ThumbDownAlt /> : <ThumbDownOffAlt />}
 					</IconButton>
 				</Box>
 			);
@@ -195,8 +199,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 						},
 					}
 				)
-				.then((res) => {
-					console.log(res);
+				.then(() => {
 					setIsPageLoaded(() => false);
 					setPageReload(() => true);
 				})
@@ -255,8 +258,8 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 					},
 				}
 			)
-			.then((res) => {
-				console.log(res.data);
+			.then(() => {
+				commentLikesFetch(commentRaw);
 			})
 			.catch((err) => {
 				console.error(err);
