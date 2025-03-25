@@ -33,7 +33,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 	const [pageReload, setPageReload] = useState<boolean>(false);
 	const [isCommentsFetched, setIsCommentsFetched] = useState<boolean>(false);
 	const [commentTree, setCommentTree] = useState<CommentTreeType[]>([]);
-	const [commentRaw, setCommentRaw] = useState<CommentType>([]);
+	const [commentRaw, setCommentRaw] = useState<CommentType | undefined>();
 	const [commentLike, setCommentLike] = useState<LikesType[]>([]);
 
 	const MAX_DEPTH: number = 3;
@@ -63,7 +63,7 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 		return roots;
 	};
 
-	const commentLikesFetch = (raw: CommentType) => {
+	const commentLikesFetch = (raw: CommentType | undefined) => {
 		const arrayIds: Array<number> = [];
 		let likes: LikesType[] = [];
 		Object(raw).map((comment: CommentType) => arrayIds.push(comment.id));
