@@ -16,7 +16,7 @@ class UserController extends Controller
     public function getInfo(Request $request, string $slug) {
         $getPost = 3;
         $getLikes = 5;
-        $userInfo = User::where('username', $slug)->first();
+        $userInfo = User::whereLike('username', $slug)->first();
         if (!$userInfo) {
             return response()->json(["message" => 'Username not found'],404);
         }
