@@ -1,16 +1,16 @@
-import axios from 'axios';
-
 import React, { useState, useEffect } from 'react';
-
-import { PostType, CommentType, LikesType } from '../libs/types';
-
-import useIsUserSigned from '../hooks/useIsUserSigned';
 
 import { Box, Button, CircularProgress, Container, IconButton, TextField, Tooltip, Typography, useTheme } from '@mui/material';
 import { Reply, ThumbUpAlt, ThumbUpOffAlt, ThumbDownAlt, ThumbDownOffAlt } from '@mui/icons-material';
 
 import dayjs from 'dayjs';
+import axios from 'axios';
 import Cookies from 'js-cookie';
+
+import { PostType, CommentType, LikesType } from '../libs/types';
+import useIsUserSigned from '../hooks/useIsUserSigned';
+import { startDate } from '../utils/starDate';
+
 interface PostViewProp {
 	post: PostType;
 }
@@ -117,8 +117,8 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 				<Box>
 					<Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' }}>
 						<Typography variant='subtitle2'>@{comment.username}</Typography>
-						<Tooltip title={`Published at: ${dayjs(post?.created_at).format('YYYY-MMM-DD')}`}>
-							<Typography variant='subtitle2'>StartDate: {dayjs(comment.created_at).format('YYMM.DD @ hh:mm')}:</Typography>
+						<Tooltip title={`Commented at: ${startDate(comment?.created_at,false)}`}>
+							<Typography variant='subtitle2'>StartDate: {startDate(comment?.created_at,true, true)}:</Typography>
 						</Tooltip>
 					</Box>
 					<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>

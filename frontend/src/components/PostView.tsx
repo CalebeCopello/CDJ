@@ -1,10 +1,10 @@
 import React from 'react';
 import MDEditor from '@uiw/react-md-editor';
-import dayjs from 'dayjs';
 
-import { PostType } from '../libs/types';
 import { Box, Chip, Container, Divider, Tooltip, Typography, Paper } from '@mui/material';
 
+import { PostType } from '../libs/types';
+import { startDate } from '../utils/starDate';
 interface PostViewProp {
 	post: PostType;
 }
@@ -29,10 +29,10 @@ const PostView: React.FC<PostViewProp> = ({ post }) => {
 						align='right'
 					>
 						<Tooltip
-							title={`Published at: ${dayjs(post?.created_at).format('YYYY-MMM-DD')}`}
+							title={`Published at: ${startDate(post?.created_at, false)}`}
 							arrow
 						>
-							<span>Stardate: {dayjs(post?.created_at).format('YYMM.DD')}</span>
+							<span>Stardate: {startDate(post?.created_at, true, true)}</span>
 						</Tooltip>
 					</Typography>
 					<Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 2, rowGap: 0.5 }}>
