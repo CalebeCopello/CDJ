@@ -5,24 +5,33 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+
 use Laravel\Socialite\Facades\Socialite;
+
+use function App\Helpers\customValidateError;
 
 class AuthController extends Controller
 {
     public function signup(Request $request)
     {
+        $checkUser = User::whereRaw('LOWER(username) LIKE ?', [strtolower($request->username)])->first();
+        $checkEmail = User::whereRaw('LOWER(email) LIKE ?', [strtolower($request->email)])->first();
+        if ($checkUser) {
+            customValidateError('username','The Username is already taken. Please choose another one');
+        }
+        if ($checkEmail) {
+            customValidateError('email','The Email is already taken');
+        }
         $fields = $request->validate([
-            'username' => 'required|unique:users|min:3|max:20|regex:/^[a-zA-Z0-9_-]+$/',
+            'username' => 'required|min:3|max:20|regex:/^[a-zA-Z0-9_-]+$/',
             'email' => 'required|unique:users',
             'password' => 'required|min:4|max:20',
         ], [
             'username.required' => 'The username is required.',
-            'username.unique' => 'The Username is already taken. Please choose another one',
             'username.min' => 'The Username must be at lest 3 characters long',
             'username.max' => 'The Username must not be longer than 20 characters long',
             'username.regex' => 'The Username can only contain letters, numbers, hyphens, and underscores',
             'email.required' => 'The Email is required',
-            'email.unique' => 'The Email is already taken',
             'password.required' => 'The Password is required',
             'password.min' => 'The Password must be 4 or more characters long',
             'password.max' => 'Password must be at most 20 characters long',
