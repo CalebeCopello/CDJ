@@ -42,4 +42,17 @@ interface UserInfoType {
 	updated_at: Date;
 }
 
-export type { PostType, CommentType, LikesType, UserInfoType };
+interface UserCommentsType {
+	comment: string;
+	post: string;
+	date: Date;
+}
+
+interface UserLikesType {
+	username: string;
+	value: number;
+	post: string;
+	date: Date;
+}
+
+export type { PostType, CommentType, LikesType, UserInfoType, UserCommentsType, UserLikesType };
