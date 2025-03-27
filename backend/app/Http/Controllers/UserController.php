@@ -32,7 +32,7 @@ class UserController extends Controller
             $returnLikes = null;
         }
         foreach($commentsInfo as $value) {
-            $returnComment[] = ['comment' => $value['comment'], 'title' => $value['post']['title'], 'date' => $value['created_at']] ;
+            $returnComment[] = ['comment' => $value['comment'], 'post' => $value['post']['title'], 'date' => $value['created_at']] ;
         }
         foreach($likesInfo as $value) {
             $returnLikes[] = ['value' => $value['like_value'], 'username' => $value['comment']['user']['username'], 'post' => $value['comment']['post']['title'], 'date' => $value['created_at']];
