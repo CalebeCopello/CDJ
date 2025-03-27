@@ -26,13 +26,13 @@ class UserController extends Controller
         $returnComment = NULL;
         $returnLikes = NULL;
         
-        if ($commentsInfo->isEmpty()) {
+        if (!$commentsInfo->isEmpty()) {
             $returnComment = [];
             foreach($commentsInfo as $value) {
                 $returnComment[] = ['comment' => $value['comment'], 'post' => $value['post']['title'], 'date' => $value['created_at']] ;
             }
         }
-        if ($likesInfo->isEmpty()) {
+        if (!$likesInfo->isEmpty()) {
             $returnLikes = [];
             foreach($likesInfo as $value) {
                 $returnLikes[] = ['value' => $value['like_value'], 'username' => $value['comment']['user']['username'], 'post' => $value['comment']['post']['title'], 'date' => $value['created_at']];
