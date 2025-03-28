@@ -45,6 +45,7 @@ interface UserInfoType {
 interface UserCommentsType {
 	comment: string;
 	post: string;
+	slug: string;
 	date: Date;
 }
 
@@ -52,6 +53,7 @@ interface UserLikesType {
 	username: string;
 	value: number;
 	post: string;
+	slug: string;
 	date: Date;
 }
 
