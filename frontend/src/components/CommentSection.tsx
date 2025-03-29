@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, CircularProgress, Container, IconButton, TextField, Tooltip, Typography, useTheme } from '@mui/material';
 import { Reply, ThumbUpAlt, ThumbUpOffAlt, ThumbDownAlt, ThumbDownOffAlt } from '@mui/icons-material';
 
-import dayjs from 'dayjs';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
