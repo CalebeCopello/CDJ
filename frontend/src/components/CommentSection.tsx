@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link as ReactRouterLink } from 'react-router-dom';
 
-import { Box, Button, CircularProgress, Container, IconButton, TextField, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, Button, CircularProgress, Container, IconButton, TextField, Tooltip, Typography, useTheme, Link } from '@mui/material';
 import { Reply, ThumbUpAlt, ThumbUpOffAlt, ThumbDownAlt, ThumbDownOffAlt } from '@mui/icons-material';
 
 import axios from 'axios';
@@ -115,9 +116,18 @@ const CommentSection: React.FC<PostViewProp> = ({ post }) => {
 			<Box sx={{ marginLeft: `${comment.depth * 10}px`, borderLeft: childBorderStyle, paddingLeft: childPaddingStyle }}>
 				<Box>
 					<Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between' }}>
-						<Typography variant='subtitle2'>@{comment.username}</Typography>
-						<Tooltip title={`Commented at: ${startDate(comment?.created_at,false)}`}>
-							<Typography variant='subtitle2'>StartDate: {startDate(comment?.created_at,true, true)}:</Typography>
+						<Typography variant='subtitle2'>
+							@
+							<Link
+								component={ReactRouterLink}
+								to={`/user/view/${comment.username}`}
+								underline='hover'
+							>
+								{comment.username}
+							</Link>
+						</Typography>
+						<Tooltip title={`Commented at: ${startDate(comment?.created_at, false)}`}>
+							<Typography variant='subtitle2'>StartDate: {startDate(comment?.created_at, true, true)}:</Typography>
 						</Tooltip>
 					</Box>
 					<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>
