@@ -37,7 +37,7 @@ function Profile() {
 				console.error('Error:', err);
 				console.error('Error Message:', err.response.data);
 			});
-	}, []);
+	}, [slug]);
 
 	return (
 		<>
@@ -123,7 +123,6 @@ function Profile() {
 												>
 													<Typography
 														variant='body1'
-														align='center'
 														gutterBottom
 													>
 														{userInfo?.username} commented:
@@ -182,7 +181,22 @@ function Profile() {
 																sx={{ verticalAlign: 'middle' }}
 															/>
 														)}{' '}
-														{like.username} comment on {like.post} on {startDate(like.date, true, true)}
+														<Link
+															component={ReactRouterLink}
+															to={`/user/view/${like.username}`}
+															underline='hover'
+														>
+															{like.username}
+														</Link>{' '}
+														comment on{' '}
+														<Link
+															component={ReactRouterLink}
+															to={`/post/view/${like.slug}`}
+															underline='hover'
+														>
+															{like.post}
+														</Link>
+														{' '}Stardate {startDate(like.date, true, true)}
 													</Typography>
 												</Box>
 											</Box>
