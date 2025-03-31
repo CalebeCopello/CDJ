@@ -33,6 +33,7 @@ Route::get('/auth/google/callback', [AuthController::class, 'google']);
 
 // Posts Routes
 Route::get('/post/get-all', [PostController::class, 'getAllPosts']);
+Route::get('/post/get/bytag/{slug}', [PostController::class, 'getPostByTag']);
 Route::get('/post/get/{slug}', [PostController::class, 'getPost']);
 
 // Tags Routes
