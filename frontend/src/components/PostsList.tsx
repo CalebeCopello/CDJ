@@ -1,8 +1,10 @@
-import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Grid2, Chip, Box, CardActionArea } from '@mui/material';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link as ReactRouteLink } from 'react-router-dom';
+
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Grid2, Chip, Box, CardActionArea, Link } from '@mui/material';
+
 import { PostType } from '../libs/types';
-import { Link } from 'react-router-dom';
 
 const PostsList = () => {
 	const [isPageLoaded, setIsPageLoaded] = useState<boolean>(false);
@@ -48,20 +50,24 @@ const PostsList = () => {
 							}}
 						>
 							<CardActionArea>
-								<Link to={`/post/view/${value.slug}`}>
+								<Link 
+								component={ReactRouteLink}
+								to={`/post/view/${value.slug}`}
+								underline='hover'
+								>
 									<CardMedia
 										component='img'
 										alt='placeholder'
 										height='160'
 										image={`${STORAGE_URL}/${value.img}`}
 									/>
+									<CardHeader
+										title={value.title.length > 50 ? `${value.title.slice(0, 110)}...` : value.title}
+										titleTypographyProps={{ fontSize: 18, fontWeight: 500 }}
+										sx={{ height: 80 }}
+									/>
 								</Link>
 							</CardActionArea>
-							<CardHeader
-								title={value.title.length > 50 ? `${value.title.slice(0, 110)}...` : value.title}
-								titleTypographyProps={{ fontSize: 18, fontWeight: 500 }}
-								sx={{ height: 80 }}
-							/>
 							<CardContent>
 								<Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 2, rowGap: 0.5 }}>
 									{value.tags.map((tag, index) => (
