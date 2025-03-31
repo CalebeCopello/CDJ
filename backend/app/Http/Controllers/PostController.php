@@ -40,9 +40,7 @@ class PostController extends Controller
         ]);
 
         $fields = array_merge($fields, [ 'user_id' => $request->user()->id]);
-
         $post = Post::create($fields);
-
         $postTagController->addTagsToPost($request, $post);
 
         return response()->json($post, 201);
@@ -90,7 +88,7 @@ class PostController extends Controller
         return response($posts,200);
     }
 
-    public function getPost(Request $request, string $slug) {
+    public function getPost(string $slug) {
         $post = Post::whereRaw('LOWER(slug) = ?', [strtolower($slug)])->first();
         if(!$post) {
             return response()->json(['message' => 'Post not found'],404);
@@ -103,5 +101,18 @@ class PostController extends Controller
         $post['tags'] = $postTags;
 
         return response($post,200);
+    }
+
+    public function getPostByTag(string $slug) {
+        $tag = Tag::whereRaw('LOWER(name) = ?', [strtolower($slug)])->first();
+        if (!$tag) {
+            return response()->json(['message' => 'Tag not found'], 404);
+        }
+        $postsTags = PostTag::where('tag_id', $tag['id'])->with('post')->get();
+        $posts = NULL;
+        foreach($postsTags as $post) {
+            $posts[] = $post['post'];
+        }
+        return response()->json(['tag' => $tag,'posts' => $posts], 200);
     }
 }
