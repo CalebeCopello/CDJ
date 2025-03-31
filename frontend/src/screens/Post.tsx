@@ -33,19 +33,19 @@ const Post = () => {
 			<Box>
 				<NavBar />
 			</Box>
-			{isPageLoaded && isPostFound &&  postFetched &&(
+			{isPageLoaded && isPostFound && postFetched && (
 				<Container>
 					<Stack component={'main'}>
-						<PostView post= {postFetched}/>
+						<PostView post={postFetched} />
 					</Stack>
 					<Box>
-						<CommentSection post= {postFetched} />
+						<CommentSection post={postFetched} />
 					</Box>
 				</Container>
 			)}
 			{isPageLoaded && !isPostFound && (
 				<div>
-					Post not found. <br/> 404
+					Post not found. <br /> 404
 				</div>
 			)}
 		</>
