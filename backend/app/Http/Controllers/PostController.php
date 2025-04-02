@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\PostTag;
 use App\Models\Tag;
-use Illuminate\Support\Facades\Storage;
-
-use function Pest\Laravel\json;
 
 class PostController extends Controller
 {
@@ -47,7 +44,6 @@ class PostController extends Controller
     }
 
     public function uploadImage(Request $request) {
-
         if(!$request->user()->is_admin) {
             return response()->json([
                 'message' => 'You are not an Admin'
@@ -71,20 +67,7 @@ class PostController extends Controller
     }
 
     public function getAllPosts() {
-        $posts = Post::all()->toArray();
-        $tagsNamesArray = Tag::all()->pluck('name', 'id')->toArray();
-        $postTags = PostTag::all()->groupBy('post_id')->map(fn($tags) => $tags->pluck('tag_id'))->toArray();
-        
-        $postTagsArray = [];
-        foreach ($postTags as $postId => $tagsIds) {
-            $postTagsArray[$postId] = array_map(fn($tagId) => $tagsNamesArray[$tagId], $tagsIds);
-        }
-        
-        foreach ($posts as &$post) {
-            $postId = $post['id'];
-            $post['tags'] = $postTagsArray[$postId];
-        }
-
+        $posts = Post::with('tags')->get();
         return response($posts,200);
     }
 
@@ -108,7 +91,7 @@ class PostController extends Controller
         if (!$tag) {
             return response()->json(['message' => 'Tag not found'], 404);
         }
-        $postsTags = PostTag::where('tag_id', $tag['id'])->with('post')->get();
+        $postsTags = PostTag::where('tag_id', $tag['id'])->with('post', 'post.tags')->get();
         $posts = NULL;
         foreach($postsTags as $post) {
             $posts[] = $post['post'];
