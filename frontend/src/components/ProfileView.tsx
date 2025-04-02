@@ -131,24 +131,44 @@ const ProfileView: React.FC<VireProfileProp> = ({ userInfo, userComments, userLi
 									>
 										@{userInfo?.username}{' '}
 										{like.value === 1 ? (
-											<ThumbUpAlt
-												fontSize='small'
-												sx={{ verticalAlign: 'middle' }}
-											/>
+											<Tooltip
+												title='Liked'
+												arrow
+											>
+												<ThumbUpAlt
+													fontSize='small'
+													sx={{ verticalAlign: 'middle' }}
+												/>
+											</Tooltip>
 										) : (
-											<ThumbDownAlt
-												fontSize='small'
-												sx={{ verticalAlign: 'middle' }}
-											/>
+											<Tooltip
+												title='disliked'
+												arrow
+											>
+												<ThumbDownAlt
+													fontSize='small'
+													sx={{ verticalAlign: 'middle' }}
+												/>
+											</Tooltip>
 										)}{' '}
 										@
-										<Link
-											component={ReactRouterLink}
-											to={`/user/view/${like.username}`}
-											underline='hover'
-										>
-											{like.username}
-										</Link>{' '}
+										{userInfo.username === like.username ? (
+											<Typography
+												variant='body2'
+												gutterBottom
+												display={'inline'}
+											>
+												{like.username}
+											</Typography>
+										) : (
+											<Link
+												component={ReactRouterLink}
+												to={`/user/view/${like.username}`}
+												underline='hover'
+											>
+												{like.username}
+											</Link>
+										)}{' '}
 										comment on{' '}
 										<Link
 											component={ReactRouterLink}
