@@ -41,4 +41,33 @@ class UserController extends Controller
 
         return response()->json(['user' => $userInfo, 'comments' => $returnComment, 'likes' => $returnLikes], 200);
     }
+
+    public function getSelfInfo(Request $request) {
+        $userInfo = $request->user();
+        
+        $commentsInfo = PostComment::where('user_id', $userInfo['id'])->where('is_visible', true)->orderBy('updated_at', 'desc')->with('post', 'reply.user', 'post.user')->get();
+        $likesInfo = PostLikes::where('user_id', $userInfo['id'])->with('comment.user', 'comment.post.user')->get();
+        
+        $returnComment = [];
+        $returnLikes = [];
+        $likes = 0;
+        $dislikes = 0;
+
+        foreach($commentsInfo as $value) {
+            $returnComment[] = [
+                'comment' => ['value' => $value['comment'], 'date' => $value['created_at']], 
+                'reply' => ['username' => $value['reply']['user']['username'] ?? NULL, 'comment' => $value['reply']['comment'] ?? NULL], 
+                'post' => ['title' => $value['post']['title'], 'slug' => $value['post']['slug'], 'date' => $value['post']['created_at'], 'username' => $value['post']['user']['username']]
+            ];
+        }
+        foreach($likesInfo as $value) {
+            $returnLikes[] = [
+                'like' => ['value' => $value['like_value']], 
+                'comment' => ['comment' => $value['comment']['comment'], 'username' => $value['comment']['user']['username']],
+                'post' => ['slug' => $value['comment']['post']['slug'], 'title' => $value['comment']['post']['title'], 'username' => $value['comment']['post']['user']['username']]
+            ];
+        }
+
+        return response()->json(['userInfo' => $userInfo, 'commentsInfo' => $returnComment, 'likesInfo' => $returnLikes],200);
+    }
 }
