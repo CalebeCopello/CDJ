@@ -1,7 +1,8 @@
 import React from 'react';
 import MDEditor from '@uiw/react-md-editor';
+import { Link as ReactRouterLink } from 'react-router-dom';
 
-import { Box, Chip, Container, Divider, Tooltip, Typography, Paper } from '@mui/material';
+import { Box, Chip, Container, Divider, Tooltip, Typography, Paper, Link } from '@mui/material';
 
 import { PostType } from '../libs/types';
 import { startDate } from '../utils/starDate';
@@ -37,11 +38,17 @@ const PostView: React.FC<PostViewProp> = ({ post }) => {
 					</Typography>
 					<Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 2, rowGap: 0.5 }}>
 						{post?.tags.map((tag, index) => (
-							<Chip
-								key={index}
-								variant='outlined'
-								label={tag}
-							/>
+							<Link
+								component={ReactRouterLink}
+								to={`/post/bytag/${tag}`}
+								underline='none'
+							>
+								<Chip
+									key={index}
+									variant='outlined'
+									label={tag}
+								/>
+							</Link>
 						))}
 					</Box>
 					<Box sx={{ display: 'flex', justifyContent: 'center', my: mValue }}>
