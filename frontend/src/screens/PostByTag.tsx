@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import { PostType, TagType } from '../libs/types';
 import axios from 'axios';
-import PostListComponent from './PostListComponent';
+import PostListComponent from '../components/PostListComponent';
+import { Box, Stack } from '@mui/material';
 
 const PostByTag = () => {
 	const [fetchedPosts, setFetchedPosts] = useState<PostType[] | null>(null);
@@ -26,11 +27,19 @@ const PostByTag = () => {
 				console.error(err);
 			});
 	}, [slug]);
-	
+
 	return (
 		<>
-			<NavBar />
-			<PostListComponent fetchedPosts={fetchedPosts} isPageLoaded={isPageLoaded} searchTag={fetchedTag?.name} />
+			<Box>
+				<NavBar />
+			</Box>
+			<Stack component={'main'}>
+				<PostListComponent
+					fetchedPosts={fetchedPosts}
+					isPageLoaded={isPageLoaded}
+					searchTag={fetchedTag?.name}
+				/>
+			</Stack>
 		</>
 	);
 };

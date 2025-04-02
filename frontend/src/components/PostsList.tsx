@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 
-import PostListComponent from '../screens/PostListComponent';
+import PostListComponent from './PostListComponent';
 import { PostType } from '../libs/types';
 
 const PostsList = () => {
@@ -10,7 +10,6 @@ const PostsList = () => {
 	const [fetchedPosts, setFetchedPosts] = useState<PostType[] | null>(null);
 
 	const API_URL: string = import.meta.env.VITE_API_URL;
-	console.log(fetchedPosts)
 	useEffect(() => {
 		setIsPageLoaded(true);
 		axios
