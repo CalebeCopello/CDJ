@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Users
     Route::delete('/signout', [AuthController::class, 'signout']);
     Route::get('/user/signed', [UserController::class, 'signed']);
+    Route::get('/user/self', [UserController::class, 'getSelfInfo']);
     Route::get('/user', function (Request $request) {return 'Allowed'.$request->user(); });
     // Post
     Route::post('/post/add', [PostController::class, 'addPost']);
