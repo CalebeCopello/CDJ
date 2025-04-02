@@ -20,4 +20,8 @@ class PostComment extends Model
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function reply() {
+        return $this->belongsTo(PostComment::class, 'parent_id');
+    }
 }
