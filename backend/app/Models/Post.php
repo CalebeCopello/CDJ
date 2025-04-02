@@ -21,8 +21,11 @@ class Post extends Model
         'is_published',
     ];
 
-    public function tags()
-    {
+    public function tags() {
         return $this->belongsToMany(Tag::class, 'post_tags');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
