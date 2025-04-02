@@ -22,6 +22,7 @@ import User from './screens/User';
 import AddPost from './screens/AddPost';
 import Post from './screens/Post';
 import Profile from './screens/Profile';
+import PostByTag from './screens/PostByTag';
 
 function App() {
 	return (
@@ -53,6 +54,10 @@ function App() {
 						<Route
 							path='/post/view/:slug'
 							element={<Post />}
+						/>
+						<Route
+							path='/post/bytag/:slug'
+							element={<PostByTag />}
 						/>
 						<Route
 							path='/user/view/:slug'
