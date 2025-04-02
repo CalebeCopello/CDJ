@@ -7,11 +7,17 @@ interface PostType {
 	slug: string;
 	title: string;
 	user_id: number;
-	tags: string[];
+	tags: TagType[];
 	created_at: Date;
 	updated_at: Date;
 }
 
+interface TagType {
+	id: number;
+	name: string;
+	created_at: Date;
+	updated_at: Date;
+}
 interface CommentType {
 	id: number;
 	comment: string;
@@ -22,6 +28,7 @@ interface CommentType {
 	created_at: Date;
 	updated_at: Date;
 }
+
 
 interface LikesType {
 	id: number;
@@ -57,4 +64,4 @@ interface UserLikesType {
 	date: Date;
 }
 
-export type { PostType, CommentType, LikesType, UserInfoType, UserCommentsType, UserLikesType };
+export type { PostType, TagType, CommentType, LikesType, UserInfoType, UserCommentsType, UserLikesType };
