@@ -29,7 +29,6 @@ interface CommentType {
 	updated_at: Date;
 }
 
-
 interface LikesType {
 	id: number;
 	user_id: number;
@@ -42,7 +41,7 @@ interface LikesType {
 interface UserInfoType {
 	id: number;
 	username: string;
-	email: string;
+	email?: string;
 	is_admin: boolean;
 	email_verified_at: Date;
 	created_at: Date;
@@ -64,4 +63,35 @@ interface UserLikesType {
 	date: Date;
 }
 
-export type { PostType, TagType, CommentType, LikesType, UserInfoType, UserCommentsType, UserLikesType };
+interface CommentInfoType {
+	comment: {
+		value: string;
+		date: Date;
+	};
+	post: {
+		title: string;
+		slug: string;
+		date: Date;
+		username: string;
+	};
+	reply: {
+		comment?: string;
+		username?: string;
+	};
+}
+interface LikesInfoType {
+	comment: {
+		comment: string;
+		username: string;
+	};
+	like: {
+		value: number;
+	};
+	post: {
+		slug: string;
+		title: string;
+		username: string;
+	};
+}
+
+export type { PostType, TagType, CommentType, LikesType, UserInfoType, UserCommentsType, UserLikesType, CommentInfoType, LikesInfoType };
