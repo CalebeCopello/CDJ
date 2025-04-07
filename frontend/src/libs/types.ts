@@ -86,6 +86,7 @@ interface LikesInfoType {
 	};
 	like: {
 		value: number;
+		date: Date;
 	};
 	post: {
 		slug: string;
