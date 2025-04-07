@@ -65,7 +65,7 @@ class UserController extends Controller
         }
         foreach ($likesInfo as $value) {
             $returnLikes[] = [
-                'like' => ['value' => $value['like_value']],
+                'like' => ['value' => $value['like_value'], 'date' => $value['created_at']],
                 'comment' => ['comment' => $value['comment']['comment'], 'username' => $value['comment']['user']['username']],
                 'post' => ['slug' => $value['comment']['post']['slug'], 'title' => $value['comment']['post']['title'], 'username' => $value['comment']['post']['user']['username']]
             ];
