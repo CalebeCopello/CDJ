@@ -1,15 +1,108 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Link as ReactRouterLink } from 'react-router-dom';
 
-import { Container, Paper, Box, Typography, Tooltip, Divider, Link, useTheme } from '@mui/material';
+import { Container, Paper, Box, Typography, Tooltip, Divider, Link, useTheme, Button } from '@mui/material';
 import { ThumbUpAlt, ThumbDownAlt } from '@mui/icons-material';
 
 import { startDate } from '../utils/starDate';
 import { UserInfoType, CommentInfoType, LikesInfoType } from '../libs/types';
 
-function UserProfile() {
+interface UserLikesComponentType {
+	userLikes: LikesInfoType[];
+	userInfo: UserInfoType;
+	mValue: number;
+}
+
+const UserLikesComponent: React.FC<UserLikesComponentType> = ({ userLikes, userInfo, mValue }) => {
+	const [limit, setLimit] = useState<number>(5);
+
+	useEffect(() => {}, [limit]);
+
+	const addLimit = () => {
+		setLimit((prev) => prev + 5);
+	};
+
+	return (
+		<>
+			{userLikes.map((like: LikesInfoType, index: number) => (
+				<Box key={index}>
+					{index < limit && (
+						<Box>
+							{index === 0 ? '' : <Divider sx={{ my: mValue / mValue }} />}
+							<Typography
+								gutterBottom
+								variant='body2'
+							>
+								{like.like.value === 1 ? (
+									<Tooltip
+										title='Liked'
+										arrow
+									>
+										<ThumbUpAlt
+											fontSize='small'
+											sx={{ verticalAlign: 'middle' }}
+										/>
+									</Tooltip>
+								) : (
+									<Tooltip
+										title='disliked'
+										arrow
+									>
+										<ThumbDownAlt
+											fontSize='small'
+											sx={{ verticalAlign: 'middle' }}
+										/>
+									</Tooltip>
+								)}{' '}
+								@
+								{userInfo?.username === like.comment.username ? (
+									<Typography
+										variant='body2'
+										gutterBottom
+										display={'inline'}
+									>
+										{like.comment.username}
+									</Typography>
+								) : (
+									<Link
+										component={ReactRouterLink}
+										to={`/user/view/${like.comment.username}`}
+										underline='hover'
+									>
+										{like.comment.username}
+									</Link>
+								)}{' '}
+								comment on{' '}
+								<Link
+									component={ReactRouterLink}
+									to={`/post/view/${like.post.slug}`}
+									underline='hover'
+								>
+									{like.post.title}
+								</Link>{' '}
+								post by
+								<Link
+									component={ReactRouterLink}
+									to={`/user/view/${like.post.username}`}
+									underline='hover'
+									sx={{ ml: 0.5 }}
+								>
+									{like.post.username}
+								</Link>{' '}
+								at Stardate {startDate(like.like.date, true, true)}
+							</Typography>
+						</Box>
+					)}
+				</Box>
+			))}
+			<Button variant='contained' fullWidth sx={{mt: mValue}} onClick={addLimit} disabled={limit >= userLikes.length}>Load More</Button>
+		</>
+	);
+};
+
+const UserProfile = () => {
 	const [userInfo, setUserInfo] = useState<UserInfoType | null>(null);
 	const [userComments, setUserComments] = useState<CommentInfoType[] | null>(null);
 	const [userLikes, setUserLikes] = useState<LikesInfoType[] | null>(null);
@@ -154,68 +247,11 @@ function UserProfile() {
 					sx={{ p: mValue / mValue, mb: mValue }}
 				>
 					{userLikes ? (
-						userLikes.map((like: LikesInfoType, index: number) => (
-							<Box key={index}>
-								{index === 0 ? '' : <Divider sx={{ my: mValue / mValue }} />}
-								<Box>
-									<Typography
-										gutterBottom
-										variant='body2'
-									>
-										{like.like.value === 1 ? (
-											<Tooltip
-												title='Liked'
-												arrow
-											>
-												<ThumbUpAlt
-													fontSize='small'
-													sx={{ verticalAlign: 'middle' }}
-												/>
-											</Tooltip>
-										) : (
-											<Tooltip
-												title='disliked'
-												arrow
-											>
-												<ThumbDownAlt
-													fontSize='small'
-													sx={{ verticalAlign: 'middle' }}
-												/>
-											</Tooltip>
-										)}{' '}
-										@
-										{userInfo?.username === like.comment.username ? (
-											<Typography
-												variant='body2'
-												gutterBottom
-												display={'inline'}
-											>
-												{like.comment.username}
-											</Typography>
-										) : (
-											<Link
-												component={ReactRouterLink}
-												to={`/user/view/${like.comment.username}`}
-												underline='hover'
-											>
-												{like.comment.username}
-											</Link>
-										)}{' '}
-										comment on{' '}
-										<Link
-											component={ReactRouterLink}
-											to={`/post/view/${like.post.slug}`}
-											underline='hover'
-										>
-											{like.post.title}
-										</Link> from 
-										<Link component={ReactRouterLink} to={`/user/view/${like.post.username}`} underline='hover'>{like.post.username}</Link>
-										{' '}
-										Stardate {startDate(like.like.date, true, true)}
-									</Typography>
-								</Box>
-							</Box>
-						))
+						<UserLikesComponent
+							userLikes={userLikes}
+							userInfo={userInfo}
+							mValue={mValue}
+						/>
 					) : (
 						<Typography
 							variant='body2'
@@ -226,6 +262,6 @@ function UserProfile() {
 			</Container>
 		</>
 	);
-}
+};
 
 export default UserProfile;
