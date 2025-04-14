@@ -49,7 +49,7 @@ class UserController extends Controller
         $userInfo = $request->user();
 
         $commentsInfo = PostComment::where('user_id', $userInfo['id'])->where('is_visible', true)->orderBy('updated_at', 'desc')->with('post', 'reply.user', 'post.user')->get();
-        $likesInfo = PostLikes::where('user_id', $userInfo['id'])->with('comment.user', 'comment.post.user')->get();
+        $likesInfo = PostLikes::where('user_id', $userInfo['id'])->orderBy('updated_at', 'desc')->with('comment.user', 'comment.post.user')->get();
 
         $returnComment = [];
         $returnLikes = [];
