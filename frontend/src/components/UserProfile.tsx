@@ -9,11 +9,94 @@ import { ThumbUpAlt, ThumbDownAlt } from '@mui/icons-material';
 import { startDate } from '../utils/starDate';
 import { UserInfoType, CommentInfoType, LikesInfoType } from '../libs/types';
 
+interface UserCommentsComponentType {
+	userComments: CommentInfoType;
+	mValue: number;
+}
 interface UserLikesComponentType {
 	userLikes: LikesInfoType[];
 	userInfo: UserInfoType;
 	mValue: number;
 }
+
+const UserCommentsComponent: React.FC<UserCommentsComponentType> = ({ userComments, mValue }) => {
+	const [limit, setLimit] = useState<number>(5);
+
+	useEffect(() => {}, [limit]);
+
+	const addLimit = () => {
+		setLimit((prev) => prev + 5);
+	};
+	const theme = useTheme();
+	return (
+		<>
+			{Object(userComments).map((comment: CommentInfoType, index: number) => (
+				<Box key={index}>
+					{index < limit && (
+						<Box>
+							{index === 0 ? '' : <Divider sx={{ my: 1 }} />}
+							<Paper
+								elevation={2}
+								sx={{ p: mValue / mValue }}
+							>
+								<Box sx={{ display: 'flex' }}>
+									<Typography
+										variant='body1'
+										gutterBottom
+									>
+										You {comment.reply.username ? `replied ` : `commented`}
+									</Typography>
+									{comment.reply.username && (
+										<Link
+											component={ReactRouterLink}
+											to={`/user/view/${comment.reply.username}`}
+											underline='hover'
+											sx={{ ml: 0.5 }}
+										>
+											{comment.reply.username}
+										</Link>
+									)}
+								</Box>
+								<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>{comment.comment.value}</Box>
+								<Typography
+									variant='body2'
+									align='justify'
+									sx={{ mt: mValue / mValue }}
+								>
+									on{' '}
+									<Link
+										component={ReactRouterLink}
+										to={`/post/view/${comment.post.slug}`}
+										underline='hover'
+									>
+										{comment.post.title}
+									</Link>{' '}
+									at {startDate(comment.post.date, true, true)} from{' '}
+									<Link
+										component={ReactRouterLink}
+										to={`/user/view/${comment.post.username}`}
+										underline='hover'
+									>
+										{comment.post.username}
+									</Link>{' '}
+								</Typography>
+							</Paper>
+						</Box>
+					)}
+				</Box>
+			))}
+			<Button
+				variant='contained'
+				fullWidth
+				sx={{ mt: mValue }}
+				onClick={addLimit}
+				disabled={limit >= userComments.length}
+			>
+				Load More
+			</Button>
+		</>
+	);
+};
 
 const UserLikesComponent: React.FC<UserLikesComponentType> = ({ userLikes, userInfo, mValue }) => {
 	const [limit, setLimit] = useState<number>(5);
@@ -97,7 +180,15 @@ const UserLikesComponent: React.FC<UserLikesComponentType> = ({ userLikes, userI
 					)}
 				</Box>
 			))}
-			<Button variant='contained' fullWidth sx={{mt: mValue}} onClick={addLimit} disabled={limit >= userLikes.length}>Load More</Button>
+			<Button
+				variant='contained'
+				fullWidth
+				sx={{ mt: mValue }}
+				onClick={addLimit}
+				disabled={limit >= userLikes.length}
+			>
+				Load More
+			</Button>
 		</>
 	);
 };
@@ -111,7 +202,6 @@ const UserProfile = () => {
 	const API_URL: string = import.meta.env.VITE_API_URL;
 	const TOKEN: string | undefined = Cookies.get('CDJAuth');
 	const mValue: number = 2;
-	const theme = useTheme();
 
 	useEffect(() => {
 		setIsUserInfoLoaded(() => true);
@@ -122,7 +212,6 @@ const UserProfile = () => {
 				},
 			})
 			.then((res) => {
-				console.log(res.data);
 				setUserInfo(() => res.data.userInfo);
 				setUserComments(() => res.data.commentsInfo);
 				setUserLikes(() => res.data.likesInfo);
@@ -184,57 +273,10 @@ const UserProfile = () => {
 					sx={{ p: mValue / mValue, mb: mValue }}
 				>
 					{userComments ? (
-						userComments.map((comment: CommentInfoType, index: number) => (
-							<Box key={index}>
-								{index === 0 ? '' : <Divider sx={{ my: 1 }} />}
-								<Paper
-									elevation={2}
-									sx={{ p: mValue / mValue }}
-								>
-									<Box sx={{ display: 'flex' }}>
-										<Typography
-											variant='body1'
-											gutterBottom
-										>
-											You {comment.reply.username ? `replied ` : `commented`}
-										</Typography>
-										{comment.reply.username && (
-											<Link
-												component={ReactRouterLink}
-												to={`/user/view/${comment.reply.username}`}
-												underline='hover'
-												sx={{ ml: 0.5 }}
-											>
-												{comment.reply.username}
-											</Link>
-										)}
-									</Box>
-									<Box sx={{ border: `1px solid ${theme.palette.secondary.main}`, borderRadius: 1, p: 0.5 }}>{comment.comment.value}</Box>
-									<Typography
-										variant='body2'
-										align='justify'
-										sx={{ mt: mValue / mValue }}
-									>
-										on{' '}
-										<Link
-											component={ReactRouterLink}
-											to={`/post/view/${comment.post.slug}`}
-											underline='hover'
-										>
-											{comment.post.title}
-										</Link>{' '}
-										at {startDate(comment.post.date, true, true)} from{' '}
-										<Link
-											component={ReactRouterLink}
-											to={`/user/view/${comment.post.username}`}
-											underline='hover'
-										>
-											{comment.post.username}
-										</Link>{' '}
-									</Typography>
-								</Paper>
-							</Box>
-						))
+						<UserCommentsComponent
+							userComments={userComments}
+							mValue={mValue}
+						/>
 					) : (
 						<Typography
 							variant='body2'
