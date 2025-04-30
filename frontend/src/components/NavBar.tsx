@@ -120,7 +120,14 @@ const NavBar = () => {
 										>
 											Profile
 										</MenuItem>
-										<MenuItem onClick={closerUserMenu}>Settings</MenuItem>
+										<MenuItem
+											onClick={() => {
+												closerUserMenu();
+												navigate('/user/settings');
+											}}
+										>
+											Settings
+										</MenuItem>
 										<Divider />
 										<MenuItem onClick={closerUserMenu}>Sign Out</MenuItem>
 									</Menu>
