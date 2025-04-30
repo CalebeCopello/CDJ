@@ -23,6 +23,7 @@ import AddPost from './screens/AddPost';
 import Post from './screens/Post';
 import Profile from './screens/Profile';
 import PostByTag from './screens/PostByTag';
+import UserSettings from './screens/UserSettings';
 
 function App() {
 	return (
@@ -46,6 +47,10 @@ function App() {
 						<Route
 							path='/user'
 							element={<ProtectedRoute children={<User />} />}
+						/>
+						<Route
+							path='/user/settings'
+							element={<ProtectedRoute children={<UserSettings />} />}
 						/>
 						<Route
 							path='/post/add'
