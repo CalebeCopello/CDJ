@@ -10,7 +10,7 @@ import { startDate } from '../utils/starDate';
 import { UserInfoType, CommentInfoType, LikesInfoType } from '../libs/types';
 
 interface UserCommentsComponentType {
-	userComments: CommentInfoType;
+	userComments: CommentInfoType[];
 	mValue: number;
 }
 interface UserLikesComponentType {
@@ -28,6 +28,7 @@ const UserCommentsComponent: React.FC<UserCommentsComponentType> = ({ userCommen
 		setLimit((prev) => prev + 5);
 	};
 	const theme = useTheme();
+	console.log(userComments)
 	return (
 		<>
 			{Object(userComments).map((comment: CommentInfoType, index: number) => (
